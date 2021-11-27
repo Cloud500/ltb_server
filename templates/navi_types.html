@@ -1,0 +1,17 @@
+<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+    <li>
+        <a class="dropdown-item" href="/{{ path }}/all">
+            Alle
+        </a>
+    </li>
+    <li>
+        <hr class="dropdown-divider">
+    </li>
+    {% for type in all_types %}
+        <li>
+            <a class="dropdown-item" href="/{{ path }}/{{ type.code }}">
+                {{ type.name }}
+            </a>
+        </li>
+    {% endfor %}
+</ul>

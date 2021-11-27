@@ -1,0 +1,38 @@
+{% load ltb_tags %}
+<nav class="container-fluid pl-3 navbar navbar-expand-sm navbar-default">
+    <a class="navbar-brand" href="/">LTB Datenbank</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText"
+            aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarText">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                   data-bs-toggle="dropdown"
+                   aria-expanded="false">
+                    Bücher
+                </a>
+                {% show_all_types "ltb" %}
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                   data-bs-toggle="dropdown"
+                   aria-expanded="false">
+                    Besitz
+                </a>
+                {% show_all_types "stock" %}
+            </li>
+            {% if perms.stock.add_quant_on_site %}
+                <li class="nav-item">
+                    <a class="nav-link" href="/stock/book/add">Buch hinzufügen</a>
+                </li>
+            {% endif %}
+            {% if user.is_staff %}
+                <li class="nav-item">
+                    <a class="nav-link" href="/tlb_management">Admin</a>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
+</nav>

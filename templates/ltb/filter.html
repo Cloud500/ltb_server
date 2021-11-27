@@ -1,0 +1,46 @@
+{% load widget_tweaks %}
+<div class="container container-fluid">
+    <div class="row justify-content-center align-items-center">
+        <div class="col-auto py-2">
+            <a class="btn btn-red"
+               data-bs-toggle="collapse"
+               href="#collapseFilter"
+               role="button"
+               aria-expanded="false"
+               aria-controls="collapseFilter">
+                Zeige Filter
+            </a>
+        </div>
+    </div>
+    <div class="collapse multi-collapse" id="collapseFilter">
+        <form method="get">
+            {% csrf_token %}
+
+            {{ form.non_field_errors }}
+
+            {% for hidden_field in form.hidden_fields %}
+                {{ hidden_field.errors }}
+                {{ hidden_field }}
+            {% endfor %}
+
+            <div class="row justify-content-center align-items-center">
+                {% for field in form.visible_fields %}
+                    <div class="col-auto py-2">
+                        <div class="input-group bg-yellow rounded">
+                            <div class="input-group-text bg-yellow border-0">{{ field.label }}</div>
+                            {{ field.errors }}
+                            {{ field|add_class:'form-control bg-warning border-0' }}
+                            {{ field.help_text }}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="row justify-content-center align-items-center">
+                <div class="col-auto py-2">
+                    <button type="submit" class="btn btn-red">Filter</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+</div>

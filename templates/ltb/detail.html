@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{{ book.number }} {{ book.complete_name }}{% endblock %}
+{% block content %}
+    <div class="container-fluid">
+        <h2 class="pt-3">{{ book.type }}</h2>
+        <hr>
+        <div class="row justify-content-center align-items-center pb-3">
+            <div class="col-auto">
+                <div class="btn-group btn-group-lg" role="group" aria-label="Book navigation">
+                    <button type="button"
+                            class="btn btn-red"
+                            onclick="location.href='{{ book.previous_special_edition.get_absolute_url }}'"
+                            {% if not book.previous_special_edition %}disabled{% endif %}>
+                        Vorherige Nummer
+                    </button>
+                    <button type="button"
+                            class="btn btn-red"
+                            onclick="location.href='{{ book.next_special_edition.get_absolute_url }}'"
+                            {% if not book.next_special_edition %}disabled{% endif %}>
+                        Nächste Nummer
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card bg-yellow" style="max-width: 100%;">
+            <div class="row g-0 p-3">
+                <div class="col-auto mx-auto">
+                    {% if book.image %}
+                        <div class="position-relative">
+                            <img class="img-fluid rounded-start" src="{{ book.image.url }}" alt="cover"
+                                 style="max-width: 266px;">
+                            {% if book.inventory_count > 0 %}
+                                <a href="#"> {# TODO: link zu den Büchern #}
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill
+                                bg_badge {% if book.have_first_edition %}first_edition{% endif %}">
+                                    {{ book.inventory_count }}
+                                </span>
+                                </a>
+                            {% endif %}
+                        </div>
+                    {% else %}
+                        <img class="img-fluid rounded-start" src="{% static 'images/not_found.png' %}" alt="cover"
+                             style="max-width: 266px;">
+                    {% endif %}
+                </div>
+                <div class="col">
+                    <div class="card-body">
+                        <ol class="list-group">
+                            <li class="list-group-item d-flex justify-content-between align-items-start bg-yellow">
+                                <div class="me-auto">
+                                    <div class="fw-bold">
+                                        Nummer
+                                    </div>
+                                    <div class="ms-5 me-auto">
+                                        {{ book.number }}
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-start bg-yellow">
+                                <div class="me-auto">
+                                    <div class="fw-bold">
+                                        Titel
+                                    </div>
+                                    <div class="ms-5 me-auto">
+                                        {{ book.complete_name }}
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items- bg-yellow">
+                                <div class="me-auto">
+                                    <div class="fw-bold">
+                                        Erscheinungsdatum
+                                    </div>
+                                    <div class="ms-5 me-auto">
+                                        {{ book.release_date|date:"d.m.Y" }}
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-start bg-yellow">
+                                <div class="me-auto">
+                                    <div class="fw-bold">
+                                        Geschichtsanzahl
+                                    </div>
+                                    <div class="ms-5 me-auto">
+                                        {{ book.stories }}
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-start bg-yellow">
+                                <div class="me-auto">
+                                    <div class="fw-bold">
+                                        Seitenanzahl
+                                    </div>
+                                    <div class="ms-5 me-auto">
+                                        {{ book.pages }}
+                                    </div>
+                                </div>
+                            </li>
+                            {% if book.special_edition_count > 1 %}
+                                <li class="list-group-item d-flex justify-content-between align-items-start bg-yellow">
+                                    <div class="me-auto">
+                                        <div class="fw-bold">
+                                            Editionen
+                                        </div>
+                                        <div class="ms-5 me-auto">
+                                            <div class="btn-group btn-group-sm" role="group" aria-label="Book editions">
+                                                {% for edition in book.all_special_editions %}
+                                                    <button type="button"
+                                                            class="btn btn-red"
+                                                            onclick="location.href='{{ edition.get_absolute_url }}'"
+                                                            {% if edition == book %}disabled{% endif %}>
+                                                        {{ edition.name }}
+                                                    </button>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            {% endif %}
+                            {% if book.editions_count > 1 %}
+                                <li class="list-group-item d-flex justify-content-between align-items-start bg-yellow">
+                                    <div class="me-auto">
+                                        <div class="fw-bold">
+                                            Auflagen
+                                        </div>
+                                        <div class="ms-5 me-auto">
+                                            <div class="btn-group btn-group-sm" role="group" aria-label="Book editions">
+                                                {% for edition in book.all_editions %}
+                                                    <button type="button"
+                                                            class="btn btn-red"
+                                                            onclick="location.href='{{ edition.get_absolute_url }}'"
+                                                            {% if edition == book %}disabled{% endif %}>
+                                                        {{ edition.edition }}
+                                                    </button>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            {% endif %}
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

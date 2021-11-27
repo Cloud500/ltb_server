@@ -1,0 +1,50 @@
+{% load static %}
+{% load widget_tweaks %}
+{% block content %}
+    <div class="card bg-yellow text-dark" style="border:none;width:100%;height:auto;">
+        <div class="card-body">
+            <form method="post" name="login">
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+
+                {% for hidden_field in form.hidden_fields %}
+                    {{ hidden_field.errors }}
+                    {{ hidden_field }}
+                {% endfor %}
+
+                <div class="row justify-content-md-center">
+                    <div class="col py-2">
+                        <h5 class="text-center">
+                            Benutzeranmeldung
+                        </h5>
+                    </div>
+                </div>
+
+                {% if message %}
+                    <div class="row justify-content-md-center">
+                        <div class="col py-2">
+                            <h5 class="text-center text-danger">
+                                {{ message }}
+                            </h5>
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% for field in form.visible_fields %}
+                    <div class="row justify-content-md-center">
+                        <div class="mb-3">
+                            <label for="exampleInputEmail1" class="form-label">{{ field.label }}</label>
+                            {{ field|add_class:'form-control bg-warning border-0' }}
+                        </div>
+                    </div>
+                {% endfor %}
+
+                <div class="row justify-content-center align-items-center">
+                    <div class="col-auto py-2">
+                        <button type="submit" class="btn btn-red">Einloggen</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
