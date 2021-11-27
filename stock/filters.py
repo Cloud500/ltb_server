@@ -1,7 +1,7 @@
 import django_filters
 
 from .models import Quant
-from ltb.models import LTBType, LTBNumberNumber, LTBEditionNumber
+from ltb.models import LTBType, LTBNumber, LTBEditionNumber
 
 
 class QuantFilter(django_filters.FilterSet):
@@ -13,7 +13,7 @@ class QuantFilter(django_filters.FilterSet):
     complete_name = django_filters.CharFilter(label='Name',
                                               lookup_expr='icontains')
     number = django_filters.ModelChoiceFilter(label='Nummer',
-                                              queryset=LTBNumberNumber.objects.all(),
+                                              queryset=LTBNumber.objects.all(),
                                               method='filter_data',
                                               empty_label="Alle")
     edition = django_filters.ModelChoiceFilter(label='Auflage',
@@ -28,7 +28,7 @@ class QuantFilter(django_filters.FilterSet):
     @staticmethod
     def filter_data(queryset, name, value):
         if name == 'number':
-            queryset = queryset.filter(book__ltb_edition__ltb_number_set__ltb_number_number=value)
+            queryset = queryset.filter(book__ltb_edition__ltb_number_set__ltb_number=value)
         if name == 'edition':
             queryset = queryset.filter(book__ltb_edition__ltb_edition_number=value)
         return queryset

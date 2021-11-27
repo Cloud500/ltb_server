@@ -39,18 +39,18 @@ class LTBType(models.Model):
 
     def create_books(self):
         for number in range(1, self.current_number + 1):
-            ltb_number_number = LTBNumberNumber.objects.filter(number=number).first()
-            if not ltb_number_number:
-                ltb_number_number = LTBNumberNumber(number=number)
-                ltb_number_number.save()
-            ltb_number = LTBNumberSet.objects.filter(ltb_number_number=ltb_number_number, ltb_type=self).first()
+            ltb_number = LTBNumber.objects.filter(number=number).first()
             if not ltb_number:
-                ltb_number = LTBNumberSet(ltb_number_number=ltb_number_number, ltb_type=self)
+                ltb_number = LTBNumber(number=number)
+                ltb_number.save()
+            ltb_number = LTBNumberSet.objects.filter(ltb_number=ltb_number, ltb_type=self).first()
+            if not ltb_number:
+                ltb_number = LTBNumberSet(ltb_number=ltb_number, ltb_type=self)
                 ltb_number.save()
             ltb_number.create_editions()
 
 
-class LTBNumberNumber(models.Model):  # TODO: Rename to LTBNumber
+class LTBNumber(models.Model):
     number = models.PositiveIntegerField("Number", unique=True)
     slug = models.SlugField(max_length=3, unique=True)
 
@@ -72,14 +72,14 @@ class LTBNumberNumber(models.Model):  # TODO: Rename to LTBNumber
         super().save(*args, **kwargs)
 
     def get_next_number(self):
-        all_numbers = LTBNumberNumber.objects.all()
+        all_numbers = LTBNumber.objects.all()
         filtered_numbers = all_numbers.filter(number__gte=self.number)
         excluded_numbers = filtered_numbers.exclude(id=self.id)
         ordered_numbers = excluded_numbers.order_by('number')
         return ordered_numbers.first()
 
     def get_previous_number(self):
-        all_numbers = LTBNumberNumber.objects.all()
+        all_numbers = LTBNumber.objects.all()
         filtered_numbers = all_numbers.filter(number__lte=self.number)
         excluded_numbers = filtered_numbers.exclude(id=self.id)
         ordered_numbers = excluded_numbers.order_by('-number')
@@ -87,21 +87,21 @@ class LTBNumberNumber(models.Model):  # TODO: Rename to LTBNumber
 
 
 class LTBNumberSet(models.Model):
-    ltb_number_number = models.ForeignKey(LTBNumberNumber, related_name='numbers', on_delete=models.CASCADE)
+    ltb_number = models.ForeignKey(LTBNumber, related_name='numbers', on_delete=models.CASCADE)
     ltb_type = models.ForeignKey(LTBType, on_delete=models.CASCADE, related_name='numbers')
     url = models.CharField("Url", max_length=255, null=True, blank=True)
     slug = models.SlugField(max_length=3, unique=True)
 
     class Meta:
-        ordering = ['ltb_number_number']
-        unique_together = ('ltb_type', 'ltb_number_number',)
+        ordering = ['ltb_number']
+        unique_together = ('ltb_type', 'ltb_number',)
 
     def __str__(self):
-        return f"{self.ltb_type.code}{self.ltb_number_number.filled_number()}"
+        return f"{self.ltb_type.code}{self.ltb_number.filled_number()}"
 
     def create_slug(self):
         type_slug = self.ltb_type.slug
-        number_slug = self.ltb_number_number.slug
+        number_slug = self.ltb_number.slug
         return f"{type_slug}{number_slug}"
 
     def save(self, *args, **kwargs):
@@ -115,11 +115,11 @@ class LTBNumberSet(models.Model):
         return self.editions.all()
 
     def get_url(self):
-        scraper = LTBScraper(self.ltb_number_number.number, self.ltb_type.type_url)
+        scraper = LTBScraper(self.ltb_number.number, self.ltb_type.type_url)
         return scraper.url
 
     def create_editions(self):
-        scraper = LTBScraper(self.ltb_number_number.number, self.ltb_type.type_url)
+        scraper = LTBScraper(self.ltb_number.number, self.ltb_type.type_url)
         urls = scraper.get_edition_urls()
         data = scraper.get_edition_data(urls)
 
@@ -185,7 +185,7 @@ class LTBEdition(models.Model):
 
     def __str__(self):
         type_string = self.ltb_number_set.ltb_type.code
-        number_string = self.ltb_number_set.ltb_number_number.filled_number()
+        number_string = self.ltb_number_set.ltb_number.filled_number()
         title_string = self.title
         edition_string = f"{self.ltb_edition_number.number}. Auflage"
         return f"{type_string}{number_string} - {title_string} {edition_string}"
@@ -240,7 +240,7 @@ class LTBSpecialEdition(models.Model):  # TODO: Rename to LTB
 
     class Meta:
         unique_together = ('ltb_edition', 'sort')
-        ordering = ['ltb_edition__ltb_number_set__ltb_type', 'ltb_edition__ltb_number_set__ltb_number_number',
+        ordering = ['ltb_edition__ltb_number_set__ltb_type', 'ltb_edition__ltb_number_set__ltb_number',
                     'ltb_edition__ltb_edition_number', 'sort']
 
     @property
@@ -256,7 +256,7 @@ class LTBSpecialEdition(models.Model):  # TODO: Rename to LTB
 
     @property
     def number(self):
-        return self.ltb_edition.ltb_number_set.ltb_number_number.filled_number()
+        return self.ltb_edition.ltb_number_set.ltb_number.filled_number()
 
     @property
     def type(self):
@@ -293,7 +293,7 @@ class LTBSpecialEdition(models.Model):  # TODO: Rename to LTB
         if not self.id or self.slug != slugify(self.create_slug()):
             self.slug = slugify(self.create_slug())
         if not self.image and self.image_url:
-            scraper = LTBScraper(self.ltb_edition.ltb_number_set.ltb_number_number.number,
+            scraper = LTBScraper(self.ltb_edition.ltb_number_set.ltb_number.number,
                                  self.ltb_edition.ltb_number_set.ltb_type.type_url)
             name, image = scraper.get_image(self.image_url)
             self.image.save(name, image)
@@ -302,21 +302,21 @@ class LTBSpecialEdition(models.Model):  # TODO: Rename to LTB
         super().save(*args, **kwargs)
 
     def next_special_edition(self):
-        ltb_number_number = self.ltb_edition.ltb_number_set.ltb_number_number.get_next_number()
-        if ltb_number_number:
+        ltb_number = self.ltb_edition.ltb_number_set.ltb_number.get_next_number()
+        if ltb_number:
             ltb_special_edition = LTBSpecialEdition.objects.filter(
                 ltb_edition__ltb_number_set__ltb_type=self.ltb_edition.ltb_number_set.ltb_type,
-                ltb_edition__ltb_number_set__ltb_number_number=ltb_number_number,
+                ltb_edition__ltb_number_set__ltb_number=ltb_number,
                 ltb_edition__ltb_edition_number__number=1).first()
             return ltb_special_edition
         return None
 
     def previous_special_edition(self):
-        ltb_number_number = self.ltb_edition.ltb_number_set.ltb_number_number.get_previous_number()
-        if ltb_number_number:
+        ltb_number = self.ltb_edition.ltb_number_set.ltb_number.get_previous_number()
+        if ltb_number:
             ltb_special_edition = LTBSpecialEdition.objects.filter(
                 ltb_edition__ltb_number_set__ltb_type=self.ltb_edition.ltb_number_set.ltb_type,
-                ltb_edition__ltb_number_set__ltb_number_number=ltb_number_number,
+                ltb_edition__ltb_number_set__ltb_number=ltb_number,
                 ltb_edition__ltb_edition_number__number=1).first()
             return ltb_special_edition
         return None

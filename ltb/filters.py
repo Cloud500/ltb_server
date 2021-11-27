@@ -1,6 +1,6 @@
 import django_filters
 
-from .models import LTBSpecialEdition, LTBType, LTBNumberNumber, LTBEditionNumber
+from .models import LTBSpecialEdition, LTBType, LTBNumber, LTBEditionNumber
 
 
 class BookFilter(django_filters.FilterSet):
@@ -12,7 +12,7 @@ class BookFilter(django_filters.FilterSet):
     complete_name = django_filters.CharFilter(label='Name',
                                               lookup_expr='icontains')
     number = django_filters.ModelChoiceFilter(label='Nummer',
-                                              queryset=LTBNumberNumber.objects.all(),
+                                              queryset=LTBNumber.objects.all(),
                                               method='filter_data',
                                               empty_label="Alle")
     edition = django_filters.ModelChoiceFilter(label='Auflage',
@@ -38,7 +38,7 @@ class BookFilter(django_filters.FilterSet):
                 id_list = list(LTBSpecialEdition.not_in_stock.values_list('id', flat=True))
                 queryset = queryset.filter(id__in=id_list)
         if name == 'number':
-            queryset = queryset.filter(ltb_edition__ltb_number_set__ltb_number_number=value)
+            queryset = queryset.filter(ltb_edition__ltb_number_set__ltb_number=value)
         if name == 'edition':
             queryset = queryset.filter(ltb_edition__ltb_edition_number=value)
         return queryset

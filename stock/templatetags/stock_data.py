@@ -19,12 +19,12 @@ def get_missing_books(ltb_type):
     number_query_missing = LTBNumberSet.objects.exclude(id__in=existing_number_ids).filter(ltb_type=ltb_type).all()
     data = {}
     for number in number_query_missing:
-        data[str(number.ltb_number_number)] = {}
+        data[str(number.ltb_number)] = {}
         for edition in number.editions.all():
-            data[str(number.ltb_number_number)][str(edition.ltb_edition_number)] = []
+            data[str(number.ltb_number)][str(edition.ltb_edition_number)] = []
             for book in edition.special_editions.all():
                 if book.name:
-                    data[str(number.ltb_number_number)][str(edition.ltb_edition_number)].append(book.name)
+                    data[str(number.ltb_number)][str(edition.ltb_edition_number)].append(book.name)
 
     return data
 
@@ -44,7 +44,7 @@ def format_all_missing_data(list):
     TODO: Implementieren
     test = list(
             number_query_missing.values_list(
-                                'ltb_number_number__number',
+                                'ltb_number__number',
                                 'editions__ltb_edition_number__number',
                                 'editions__special_editions__name',
                                 'editions__title'))
@@ -87,6 +87,6 @@ def get_stock_number_data():
             'count_all': get_all1_numbers(ltb_type),
             'missing_numbers': list(
                 map(lambda number: str(number).zfill(3),
-                    list(number_query_missing.values_list('ltb_number_number__number', flat=True)))),
+                    list(number_query_missing.values_list('ltb_number', flat=True)))),
         }
     return data

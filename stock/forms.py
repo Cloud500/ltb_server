@@ -1,7 +1,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
 
-from ltb.models import LTBType, LTBNumberNumber, LTBEditionNumber, LTBSpecialEdition
+from ltb.models import LTBType, LTBNumber, LTBEditionNumber, LTBSpecialEdition
 from .models import Quant
 
 
@@ -46,7 +46,7 @@ class AddBookForm(forms.ModelForm):
         if valid_data:
             book = LTBSpecialEdition.objects.filter(
                 ltb_edition__ltb_number_set__ltb_type__id=int(ltb_type_id),
-                ltb_edition__ltb_number_set__ltb_number_number__number=number,
+                ltb_edition__ltb_number_set__ltb_number__number=number,
                 ltb_edition__ltb_edition_number__id=int(ltb_edition_id)).first()
             if not book:
                 message['success'] = False
