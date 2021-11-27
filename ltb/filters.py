@@ -38,7 +38,7 @@ class BookFilter(django_filters.FilterSet):
                 id_list = list(LTBSpecialEdition.not_in_stock.values_list('id', flat=True))
                 queryset = queryset.filter(id__in=id_list)
         if name == 'number':
-            queryset = queryset.filter(ltb_edition__ltb_number__ltb_number_number=value)
+            queryset = queryset.filter(ltb_edition__ltb_number_set__ltb_number_number=value)
         if name == 'edition':
             queryset = queryset.filter(ltb_edition__ltb_edition_number=value)
         return queryset
@@ -58,5 +58,5 @@ class BookCompleteFilter(BookFilter):
     def filter_data(queryset, name, value):
         queryset = BookFilter.filter_data(queryset, name, value)
         if name == 'type':
-            queryset = queryset.filter(ltb_edition__ltb_number__ltb_type=value)
+            queryset = queryset.filter(ltb_edition__ltb_number_set__ltb_type=value)
         return queryset

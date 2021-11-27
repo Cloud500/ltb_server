@@ -28,7 +28,7 @@ class QuantFilter(django_filters.FilterSet):
     @staticmethod
     def filter_data(queryset, name, value):
         if name == 'number':
-            queryset = queryset.filter(book__ltb_edition__ltb_number__ltb_number_number=value)
+            queryset = queryset.filter(book__ltb_edition__ltb_number_set__ltb_number_number=value)
         if name == 'edition':
             queryset = queryset.filter(book__ltb_edition__ltb_edition_number=value)
         return queryset
@@ -48,5 +48,5 @@ class QuantCompleteFilter(QuantFilter):
     def filter_data(queryset, name, value):
         queryset = QuantFilter.filter_data(queryset, name, value)
         if name == 'type':
-            queryset = queryset.filter(book__ltb_edition__ltb_number__ltb_type=value)
+            queryset = queryset.filter(book__ltb_edition__ltb_number_set__ltb_type=value)
         return queryset

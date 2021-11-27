@@ -43,9 +43,9 @@ class LTBType(models.Model):
             if not ltb_number_number:
                 ltb_number_number = LTBNumberNumber(number=number)
                 ltb_number_number.save()
-            ltb_number = LTBNumber.objects.filter(ltb_number_number=ltb_number_number, ltb_type=self).first()
+            ltb_number = LTBNumberSet.objects.filter(ltb_number_number=ltb_number_number, ltb_type=self).first()
             if not ltb_number:
-                ltb_number = LTBNumber(ltb_number_number=ltb_number_number, ltb_type=self)
+                ltb_number = LTBNumberSet(ltb_number_number=ltb_number_number, ltb_type=self)
                 ltb_number.save()
             ltb_number.create_editions()
 
@@ -86,7 +86,7 @@ class LTBNumberNumber(models.Model):  # TODO: Rename to LTBNumber
         return ordered_numbers.first()
 
 
-class LTBNumber(models.Model):  # TODO: Rename to LTBNumberSet
+class LTBNumberSet(models.Model):
     ltb_number_number = models.ForeignKey(LTBNumberNumber, related_name='numbers', on_delete=models.CASCADE)
     ltb_type = models.ForeignKey(LTBType, on_delete=models.CASCADE, related_name='numbers')
     url = models.CharField("Url", max_length=255, null=True, blank=True)
@@ -170,7 +170,7 @@ class LTBEditionNumber(models.Model):
 
 
 class LTBEdition(models.Model):
-    ltb_number = models.ForeignKey(LTBNumber, related_name='editions', on_delete=models.CASCADE)
+    ltb_number_set = models.ForeignKey(LTBNumberSet, related_name='editions', on_delete=models.CASCADE)
     ltb_edition_number = models.ForeignKey(LTBEditionNumber, related_name='editions', on_delete=models.CASCADE)
     title = models.CharField("Title", max_length=255)
     url = models.CharField("Url", max_length=255)
@@ -180,18 +180,18 @@ class LTBEdition(models.Model):
     slug = models.SlugField(max_length=255, unique=True)
 
     class Meta:
-        unique_together = ('ltb_number', 'ltb_edition_number')
-        ordering = ['ltb_number', 'ltb_edition_number']
+        unique_together = ('ltb_number_set', 'ltb_edition_number')
+        ordering = ['ltb_number_set', 'ltb_edition_number']
 
     def __str__(self):
-        type_string = self.ltb_number.ltb_type.code
-        number_string = self.ltb_number.ltb_number_number.filled_number()
+        type_string = self.ltb_number_set.ltb_type.code
+        number_string = self.ltb_number_set.ltb_number_number.filled_number()
         title_string = self.title
         edition_string = f"{self.ltb_edition_number.number}. Auflage"
         return f"{type_string}{number_string} - {title_string} {edition_string}"
 
     def create_slug(self):
-        number_slug = self.ltb_number.slug
+        number_slug = self.ltb_number_set.slug
         edition_number_slug = self.ltb_edition_number.slug
         return f"{number_slug}_{edition_number_slug}"
 
@@ -240,7 +240,7 @@ class LTBSpecialEdition(models.Model):  # TODO: Rename to LTB
 
     class Meta:
         unique_together = ('ltb_edition', 'sort')
-        ordering = ['ltb_edition__ltb_number__ltb_type', 'ltb_edition__ltb_number__ltb_number_number',
+        ordering = ['ltb_edition__ltb_number_set__ltb_type', 'ltb_edition__ltb_number_set__ltb_number_number',
                     'ltb_edition__ltb_edition_number', 'sort']
 
     @property
@@ -256,11 +256,11 @@ class LTBSpecialEdition(models.Model):  # TODO: Rename to LTB
 
     @property
     def number(self):
-        return self.ltb_edition.ltb_number.ltb_number_number.filled_number()
+        return self.ltb_edition.ltb_number_set.ltb_number_number.filled_number()
 
     @property
     def type(self):
-        return self.ltb_edition.ltb_number.ltb_type.name
+        return self.ltb_edition.ltb_number_set.ltb_type.name
 
     @property
     def stories(self):
@@ -275,7 +275,7 @@ class LTBSpecialEdition(models.Model):  # TODO: Rename to LTB
         return self.ltb_edition.release_date
 
     def __str__(self):
-        type_string = self.ltb_edition.ltb_number.ltb_type.code
+        type_string = self.ltb_edition.ltb_number_set.ltb_type.code
         number_string = self.number
         name = self.complete_name
         edition_string = self.edition
@@ -293,8 +293,8 @@ class LTBSpecialEdition(models.Model):  # TODO: Rename to LTB
         if not self.id or self.slug != slugify(self.create_slug()):
             self.slug = slugify(self.create_slug())
         if not self.image and self.image_url:
-            scraper = LTBScraper(self.ltb_edition.ltb_number.ltb_number_number.number,
-                                 self.ltb_edition.ltb_number.ltb_type.type_url)
+            scraper = LTBScraper(self.ltb_edition.ltb_number_set.ltb_number_number.number,
+                                 self.ltb_edition.ltb_number_set.ltb_type.type_url)
             name, image = scraper.get_image(self.image_url)
             self.image.save(name, image)
         if not self.complete_name or self.complete_name != self.complete_name_calc:
@@ -302,27 +302,27 @@ class LTBSpecialEdition(models.Model):  # TODO: Rename to LTB
         super().save(*args, **kwargs)
 
     def next_special_edition(self):
-        ltb_number_number = self.ltb_edition.ltb_number.ltb_number_number.get_next_number()
+        ltb_number_number = self.ltb_edition.ltb_number_set.ltb_number_number.get_next_number()
         if ltb_number_number:
             ltb_special_edition = LTBSpecialEdition.objects.filter(
-                ltb_edition__ltb_number__ltb_type=self.ltb_edition.ltb_number.ltb_type,
-                ltb_edition__ltb_number__ltb_number_number=ltb_number_number,
+                ltb_edition__ltb_number_set__ltb_type=self.ltb_edition.ltb_number_set.ltb_type,
+                ltb_edition__ltb_number_set__ltb_number_number=ltb_number_number,
                 ltb_edition__ltb_edition_number__number=1).first()
             return ltb_special_edition
         return None
 
     def previous_special_edition(self):
-        ltb_number_number = self.ltb_edition.ltb_number.ltb_number_number.get_previous_number()
+        ltb_number_number = self.ltb_edition.ltb_number_set.ltb_number_number.get_previous_number()
         if ltb_number_number:
             ltb_special_edition = LTBSpecialEdition.objects.filter(
-                ltb_edition__ltb_number__ltb_type=self.ltb_edition.ltb_number.ltb_type,
-                ltb_edition__ltb_number__ltb_number_number=ltb_number_number,
+                ltb_edition__ltb_number_set__ltb_type=self.ltb_edition.ltb_number_set.ltb_type,
+                ltb_edition__ltb_number_set__ltb_number_number=ltb_number_number,
                 ltb_edition__ltb_edition_number__number=1).first()
             return ltb_special_edition
         return None
 
     def all_editions(self):
-        all_editions = LTBEdition.objects.filter(ltb_number=self.ltb_edition.ltb_number).all()
+        all_editions = LTBEdition.objects.filter(ltb_number=self.ltb_edition.ltb_number_set).all()
         all_special_editions = LTBSpecialEdition.objects.filter(ltb_edition__in=all_editions, sort=1).all()
         return all_special_editions
 

@@ -1,8 +1,8 @@
 from django.contrib import admin
 
-from .admin_forms import LTBTypeForm, LTBNumberNumberForm, LTBNumberForm, LTBEditionNumberForm, LTBEditionForm, \
+from .admin_forms import LTBTypeForm, LTBNumberNumberForm, LTBNumberSetForm, LTBEditionNumberForm, LTBEditionForm, \
     LTBSpecialEditionForm
-from .models import LTBType, LTBNumberNumber, LTBNumber, LTBEditionNumber, LTBEdition, LTBSpecialEdition
+from .models import LTBType, LTBNumberNumber, LTBNumberSet, LTBEditionNumber, LTBEdition, LTBSpecialEdition
 
 
 @admin.action(description='Create All Books for this Type')
@@ -37,9 +37,9 @@ class LTBNumberNumberAdmin(admin.ModelAdmin):
     ordering = ('number',)
 
 
-@admin.register(LTBNumber)
-class LTBNumberAdmin(admin.ModelAdmin):
-    form = LTBNumberForm
+@admin.register(LTBNumberSet)
+class LTBNumberSetAdmin(admin.ModelAdmin):
+    form = LTBNumberSetForm
 
     list_display = ('ltb_number_number', 'ltb_type', 'url')
     search_fields = ('ltb_number_number', 'ltb_type')
@@ -62,10 +62,10 @@ class LTBEditionNumberAdmin(admin.ModelAdmin):
 class LTBEditionAdmin(admin.ModelAdmin):
     form = LTBEditionForm
 
-    list_display = ('ltb_number', 'ltb_edition_number', 'title')
-    search_fields = ('ltb_number__number', 'ltb_edition_number__number', 'title')
-    list_filter = ('ltb_edition_number', 'ltb_number__ltb_type')
-    ordering = ('ltb_number', 'ltb_edition_number')
+    list_display = ('ltb_number_set', 'ltb_edition_number', 'title')
+    search_fields = ('ltb_number_set__ltb_number_number__number', 'ltb_edition_number__number', 'title')
+    list_filter = ('ltb_edition_number', 'ltb_number_set__ltb_type')
+    ordering = ('ltb_number_set', 'ltb_edition_number')
 
 
 @admin.register(LTBSpecialEdition)

@@ -16,7 +16,7 @@ def quant_list_type(request, s_type: str):
         filter_qs = QuantCompleteFilter(request.GET, queryset=quants)
     else:
         ltb_type = LTBType.objects.filter(code=s_type.upper()).get()
-        quants = Quant.objects.filter(book__ltb_edition__ltb_number__ltb_type=ltb_type).all()
+        quants = Quant.objects.filter(book__ltb_edition__ltb_number_set__ltb_type=ltb_type).all()
         filter_qs = QuantFilter(request.GET, queryset=quants)
 
     paginator = Paginator(filter_qs.qs, paginate_by)

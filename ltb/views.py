@@ -12,7 +12,7 @@ def book_list_type(request, s_type: str):
         filter_qs = BookCompleteFilter(request.GET, queryset=special_editions)
     else:
         ltb_type = LTBType.objects.filter(code=s_type.upper()).get()
-        special_editions = LTBSpecialEdition.objects.filter(ltb_edition__ltb_number__ltb_type=ltb_type).all()
+        special_editions = LTBSpecialEdition.objects.filter(ltb_edition__ltb_number_set__ltb_type=ltb_type).all()
         filter_qs = BookFilter(request.GET, queryset=special_editions)
 
     paginator = Paginator(filter_qs.qs, paginate_by)
