@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import LTBType, LTBNumber, LTBNumberSet, LTBEditionNumber, LTBEdition, LTBSpecialEdition
+from .models import LTBType, LTBNumber, LTBNumberSet, LTBEditionNumber, LTBEdition, LTB
 
 
 class LTBTypeForm(forms.ModelForm):
@@ -73,9 +73,9 @@ class LTBEditionForm(forms.ModelForm):
         fields = ('ltb_number_set', 'ltb_edition_number', 'url', 'title', 'stories', 'pages', 'release_date')
 
 
-class LTBSpecialEditionForm(forms.ModelForm):
+class LTBForm(forms.ModelForm):
     def save(self, commit=True):
-        instance = super(LTBSpecialEditionForm, self).save(commit=commit)
+        instance = super(LTBForm, self).save(commit=commit)
 
         instance.slug = instance.create_slug()
         if commit:
@@ -83,5 +83,5 @@ class LTBSpecialEditionForm(forms.ModelForm):
         return instance
 
     class Meta:
-        model = LTBSpecialEdition
+        model = LTB
         fields = ('ltb_edition', 'name', 'sort', 'image_url')

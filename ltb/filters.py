@@ -1,9 +1,9 @@
 import django_filters
 
-from .models import LTBSpecialEdition, LTBType, LTBNumber, LTBEditionNumber
+from .models import LTB, LTBType, LTBNumber, LTBEditionNumber
 
 
-class BookFilter(django_filters.FilterSet):
+class LTBFilter(django_filters.FilterSet):
     ON_STOCK_CHOICES = {
         (True, 'In Besitz'),
         (False, 'Nicht in Besitz')
@@ -25,17 +25,17 @@ class BookFilter(django_filters.FilterSet):
                                            empty_label="Alle")
 
     class Meta:
-        model = LTBSpecialEdition
+        model = LTB
         fields = ['complete_name', 'number', 'edition']
 
     @staticmethod
     def filter_data(queryset, name, value):
         if name == 'on_stock':
             if value:
-                id_list = list(LTBSpecialEdition.in_stock.values_list('id', flat=True))
+                id_list = list(LTB.in_stock.values_list('id', flat=True))
                 queryset = queryset.filter(id__in=id_list)
             elif not value:
-                id_list = list(LTBSpecialEdition.not_in_stock.values_list('id', flat=True))
+                id_list = list(LTB.not_in_stock.values_list('id', flat=True))
                 queryset = queryset.filter(id__in=id_list)
         if name == 'number':
             queryset = queryset.filter(ltb_edition__ltb_number_set__ltb_number=value)
@@ -44,19 +44,19 @@ class BookFilter(django_filters.FilterSet):
         return queryset
 
 
-class BookCompleteFilter(BookFilter):
+class LTBCompleteFilter(LTBFilter):
     type = django_filters.ModelChoiceFilter(label='Typ',
                                             queryset=LTBType.objects.all(),
                                             method='filter_data',
                                             empty_label="Alle")
 
     class Meta:
-        model = LTBSpecialEdition
+        model = LTB
         fields = ['complete_name', 'number', 'edition', 'type', 'on_stock']
 
     @staticmethod
     def filter_data(queryset, name, value):
-        queryset = BookFilter.filter_data(queryset, name, value)
+        queryset = LTBFilter.filter_data(queryset, name, value)
         if name == 'type':
             queryset = queryset.filter(ltb_edition__ltb_number_set__ltb_type=value)
         return queryset

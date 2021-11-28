@@ -1,8 +1,8 @@
 from django.contrib import admin
 
 from .admin_forms import LTBTypeForm, LTBNumberForm, LTBNumberSetForm, LTBEditionNumberForm, LTBEditionForm, \
-    LTBSpecialEditionForm
-from .models import LTBType, LTBNumber, LTBNumberSet, LTBEditionNumber, LTBEdition, LTBSpecialEdition
+    LTBForm
+from .models import LTBType, LTBNumber, LTBNumberSet, LTBEditionNumber, LTBEdition, LTB
 
 
 @admin.action(description='Create All Books for this Type')
@@ -68,9 +68,9 @@ class LTBEditionAdmin(admin.ModelAdmin):
     ordering = ('ltb_number_set', 'ltb_edition_number')
 
 
-@admin.register(LTBSpecialEdition)
-class LTBSpecialEditionAdmin(admin.ModelAdmin):
-    form = LTBSpecialEditionForm
+@admin.register(LTB)
+class LTBAdmin(admin.ModelAdmin):
+    form = LTBForm
 
     list_display = ('ltb_edition', 'name', 'sort')
     search_fields = ('ltb_edition', 'name',)

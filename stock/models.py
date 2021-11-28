@@ -1,10 +1,10 @@
 from django.db import models
 
-from ltb.models import LTBSpecialEdition
+from ltb.models import LTB
 
 
 class Quant(models.Model):
-    book = models.ForeignKey(LTBSpecialEdition, related_name='quants', on_delete=models.CASCADE)
+    book = models.ForeignKey(LTB, related_name='quants', on_delete=models.CASCADE)
     is_first_edition = models.BooleanField("Ist Erstausgabe")
 
     class Meta:

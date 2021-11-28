@@ -10,14 +10,14 @@
                 <div class="btn-group btn-group-lg" role="group" aria-label="Book navigation">
                     <button type="button"
                             class="btn btn-red"
-                            onclick="location.href='{{ book.previous_special_edition.get_absolute_url }}'"
-                            {% if not book.previous_special_edition %}disabled{% endif %}>
+                            onclick="location.href='{{ book.previous_ltb.get_absolute_url }}'"
+                            {% if not book.previous_ltb %}disabled{% endif %}>
                         Vorherige Nummer
                     </button>
                     <button type="button"
                             class="btn btn-red"
-                            onclick="location.href='{{ book.next_special_edition.get_absolute_url }}'"
-                            {% if not book.next_special_edition %}disabled{% endif %}>
+                            onclick="location.href='{{ book.next_ltb.get_absolute_url }}'"
+                            {% if not book.next_ltb %}disabled{% endif %}>
                         Nächste Nummer
                     </button>
                 </div>
@@ -98,7 +98,7 @@
                                     </div>
                                 </div>
                             </li>
-                            {% if book.special_edition_count > 1 %}
+                            {% if book.ltb_versions_count > 1 %}
                                 <li class="list-group-item d-flex justify-content-between align-items-start bg-yellow">
                                     <div class="me-auto">
                                         <div class="fw-bold">
@@ -106,7 +106,7 @@
                                         </div>
                                         <div class="ms-5 me-auto">
                                             <div class="btn-group btn-group-sm" role="group" aria-label="Book editions">
-                                                {% for edition in book.all_special_editions %}
+                                                {% for edition in book.all_ltb_versions %}
                                                     <button type="button"
                                                             class="btn btn-red"
                                                             onclick="location.href='{{ edition.get_absolute_url }}'"
@@ -119,7 +119,7 @@
                                     </div>
                                 </li>
                             {% endif %}
-                            {% if book.editions_count > 1 %}
+                            {% if book.ltb_editions_count > 1 %}
                                 <li class="list-group-item d-flex justify-content-between align-items-start bg-yellow">
                                     <div class="me-auto">
                                         <div class="fw-bold">
@@ -127,7 +127,7 @@
                                         </div>
                                         <div class="ms-5 me-auto">
                                             <div class="btn-group btn-group-sm" role="group" aria-label="Book editions">
-                                                {% for edition in book.all_editions %}
+                                                {% for edition in book.all_ltb_editions %}
                                                     <button type="button"
                                                             class="btn btn-red"
                                                             onclick="location.href='{{ edition.get_absolute_url }}'"

@@ -3,7 +3,7 @@ from django.db.models import Count
 from django.db.models import F
 
 from stock.models import Quant
-from ltb.models import LTBSpecialEdition, LTBType, LTBNumberSet, LTBEdition
+from ltb.models import LTB, LTBType, LTBNumberSet, LTBEdition
 
 register = template.Library()
 
@@ -22,7 +22,7 @@ def get_missing_books(ltb_type):
         data[str(number.ltb_number)] = {}
         for edition in number.editions.all():
             data[str(number.ltb_number)][str(edition.ltb_edition_number)] = []
-            for book in edition.special_editions.all():
+            for book in edition.ltbs.all():
                 if book.name:
                     data[str(number.ltb_number)][str(edition.ltb_edition_number)].append(book.name)
 
@@ -46,7 +46,7 @@ def format_all_missing_data(list):
             number_query_missing.values_list(
                                 'ltb_number__number',
                                 'editions__ltb_edition_number__number',
-                                'editions__special_editions__name',
+                                'editions__ltbs__name',
                                 'editions__title'))
     """
     master_data = {}
@@ -72,8 +72,8 @@ def format_all_missing_data(list):
 def get_stock_number_data():
     data = {}
 
-    all_number_query_exist = LTBNumberSet.objects.filter(editions__special_editions__quants__isnull=False)
-    all_number_query_missing = LTBNumberSet.objects.filter(editions__special_editions__quants__isnull=True)
+    all_number_query_exist = LTBNumberSet.objects.filter(editions__ltbs__quants__isnull=False)
+    all_number_query_missing = LTBNumberSet.objects.filter(editions__ltbs__quants__isnull=True)
 
     for ltb_type in LTBType.objects.all():
         # Hoping that Django filters without DB access in the QuerySet

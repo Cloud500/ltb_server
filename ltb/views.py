@@ -1,19 +1,19 @@
 from django.shortcuts import render, get_object_or_404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
-from .models import LTBSpecialEdition, LTBType
-from .filters import BookFilter, BookCompleteFilter
+from .models import LTB, LTBType
+from .filters import LTBFilter, LTBCompleteFilter
 
 
-def book_list_type(request, s_type: str):
+def ltb_list(request, s_type: str):
     paginate_by = request.GET.get('paginate_by', 30) or 30
     if s_type == "all":
-        special_editions = LTBSpecialEdition.objects.all()
-        filter_qs = BookCompleteFilter(request.GET, queryset=special_editions)
+        ltbs = LTB.objects.all()
+        filter_qs = LTBCompleteFilter(request.GET, queryset=ltbs)
     else:
         ltb_type = LTBType.objects.filter(code=s_type.upper()).get()
-        special_editions = LTBSpecialEdition.objects.filter(ltb_edition__ltb_number_set__ltb_type=ltb_type).all()
-        filter_qs = BookFilter(request.GET, queryset=special_editions)
+        ltbs = LTB.objects.filter(ltb_edition__ltb_number_set__ltb_type=ltb_type).all()  # TODO: Refactor
+        filter_qs = LTBFilter(request.GET, queryset=ltbs)
 
     paginator = Paginator(filter_qs.qs, paginate_by)
     page = request.GET.get('page')
@@ -34,7 +34,7 @@ def book_list_type(request, s_type: str):
 
 
 def book_detail(request, slug: str):
-    book = get_object_or_404(LTBSpecialEdition, slug=slug)
+    book = get_object_or_404(LTB, slug=slug)
 
     return render(request,
                   'ltb/detail.html',
