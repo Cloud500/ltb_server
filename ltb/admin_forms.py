@@ -4,7 +4,16 @@ from .models import LTBType, LTBNumber, LTBNumberSet, LTBEditionNumber, LTBEditi
 
 
 class LTBTypeForm(forms.ModelForm):
+    """
+    TODO: Docstring
+    """
     def save(self, commit=True):
+        """
+        TODO: Docstring
+
+        :param commit:
+        :return:
+        """
         instance = super(LTBTypeForm, self).save(commit=commit)
 
         instance.slug = instance.create_slug()
@@ -13,12 +22,24 @@ class LTBTypeForm(forms.ModelForm):
         return instance
 
     class Meta:
+        """
+        TODO: Docstring
+        """
         model = LTBType
         fields = ('name', 'code', 'current_number', 'auto_url', 'type_url')
 
 
 class LTBNumberForm(forms.ModelForm):
+    """
+    TODO: Docstring
+    """
     def save(self, commit=True):
+        """
+        TODO: Docstring
+
+        :param commit:
+        :return:
+        """
         instance = super(LTBNumberForm, self).save(commit=commit)
 
         instance.slug = instance.create_slug()
@@ -27,6 +48,9 @@ class LTBNumberForm(forms.ModelForm):
         return instance
 
     class Meta:
+        """
+        TODO: Docstring
+        """
         model = LTBNumber
         fields = ('number',)
 

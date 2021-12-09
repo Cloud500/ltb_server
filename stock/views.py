@@ -10,6 +10,13 @@ from .filters import QuantFilter, QuantCompleteFilter
 
 
 def quant_list_type(request, s_type: str):
+    """
+    TODO: Docstring
+
+    :param request:
+    :param s_type:
+    :return:
+    """
     paginate_by = request.GET.get('paginate_by', 30) or 30
     if s_type == "all":
         quants = Quant.objects.all()
@@ -38,6 +45,12 @@ def quant_list_type(request, s_type: str):
 
 
 def add_book(request):
+    """
+    TODO: Docstring
+
+    :param request:
+    :return:
+    """
     user = request.user
     if request.method == "POST":
         form = AddBookForm(data=request.POST)

@@ -9,13 +9,13 @@
             <div class="col-auto">
                 <div class="btn-group btn-group-lg" role="group" aria-label="Book navigation">
                     <button type="button"
-                            class="btn btn-red"
+                            class="btn navigate"
                             onclick="location.href='{{ book.previous_ltb.get_absolute_url }}'"
                             {% if not book.previous_ltb %}disabled{% endif %}>
                         Vorherige Nummer
                     </button>
                     <button type="button"
-                            class="btn btn-red"
+                            class="btn navigate"
                             onclick="location.href='{{ book.next_ltb.get_absolute_url }}'"
                             {% if not book.next_ltb %}disabled{% endif %}>
                         Nächste Nummer
@@ -24,7 +24,7 @@
             </div>
         </div>
 
-        <div class="card bg-yellow" style="max-width: 100%;">
+        <div class="card detail" style="max-width: 100%;">
             <div class="row g-0 p-3">
                 <div class="col-auto mx-auto">
                     {% if book.image %}
@@ -33,8 +33,7 @@
                                  style="max-width: 266px;">
                             {% if book.inventory_count > 0 %}
                                 <a href="#"> {# TODO: link zu den Büchern #}
-                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill
-                                bg_badge {% if book.have_first_edition %}first_edition{% endif %}">
+                                    <span class="inventory {% if book.have_first_edition %}first_edition{% endif %}">
                                     {{ book.inventory_count }}
                                 </span>
                                 </a>
@@ -48,67 +47,47 @@
                 <div class="col">
                     <div class="card-body">
                         <ol class="list-group">
-                            <li class="list-group-item d-flex justify-content-between align-items-start bg-yellow">
+                            <li class="list-group-item detail top">
                                 <div class="me-auto">
-                                    <div class="fw-bold">
+                                    <div class="detail_header">
                                         Nummer
                                     </div>
-                                    <div class="ms-5 me-auto">
+                                    <div class="detail_content">
                                         {{ book.number }}
                                     </div>
                                 </div>
                             </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-start bg-yellow">
+                            <li class="list-group-item detail">
                                 <div class="me-auto">
-                                    <div class="fw-bold">
+                                    <div class="detail_header">
                                         Titel
                                     </div>
-                                    <div class="ms-5 me-auto">
+                                    <div class="detail_content">
                                         {{ book.complete_name }}
                                     </div>
                                 </div>
                             </li>
-                            <li class="list-group-item d-flex justify-content-between align-items- bg-yellow">
+                            <li class="list-group-item detail">
                                 <div class="me-auto">
-                                    <div class="fw-bold">
+                                    <div class="detail_header">
                                         Erscheinungsdatum
                                     </div>
-                                    <div class="ms-5 me-auto">
+                                    <div class="detail_content">
                                         {{ book.release_date|date:"d.m.Y" }}
                                     </div>
                                 </div>
                             </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-start bg-yellow">
-                                <div class="me-auto">
-                                    <div class="fw-bold">
-                                        Geschichtsanzahl
-                                    </div>
-                                    <div class="ms-5 me-auto">
-                                        {{ book.stories }}
-                                    </div>
-                                </div>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-start bg-yellow">
-                                <div class="me-auto">
-                                    <div class="fw-bold">
-                                        Seitenanzahl
-                                    </div>
-                                    <div class="ms-5 me-auto">
-                                        {{ book.pages }}
-                                    </div>
-                                </div>
-                            </li>
                             {% if book.ltb_versions_count > 1 %}
-                                <li class="list-group-item d-flex justify-content-between align-items-start bg-yellow">
+                                <li class="list-group-item detail">
                                     <div class="me-auto">
-                                        <div class="fw-bold">
+                                        <div class="detail_header">
                                             Editionen
                                         </div>
-                                        <div class="ms-5 me-auto">
+                                        <div class="detail_content">
                                             <div class="btn-group btn-group-sm" role="group" aria-label="Book editions">
                                                 {% for edition in book.all_ltb_versions %}
                                                     <button type="button"
-                                                            class="btn btn-red"
+                                                            class="btn navigate"
                                                             onclick="location.href='{{ edition.get_absolute_url }}'"
                                                             {% if edition == book %}disabled{% endif %}>
                                                         {{ edition.name }}
@@ -120,16 +99,16 @@
                                 </li>
                             {% endif %}
                             {% if book.ltb_editions_count > 1 %}
-                                <li class="list-group-item d-flex justify-content-between align-items-start bg-yellow">
+                                <li class="list-group-item detail">
                                     <div class="me-auto">
-                                        <div class="fw-bold">
+                                        <div class="detail_header">
                                             Auflagen
                                         </div>
-                                        <div class="ms-5 me-auto">
+                                        <div class="detail_content">
                                             <div class="btn-group btn-group-sm" role="group" aria-label="Book editions">
                                                 {% for edition in book.all_ltb_editions %}
                                                     <button type="button"
-                                                            class="btn btn-red"
+                                                            class="btn navigate"
                                                             onclick="location.href='{{ edition.get_absolute_url }}'"
                                                             {% if edition == book %}disabled{% endif %}>
                                                         {{ edition.edition }}
@@ -140,6 +119,26 @@
                                     </div>
                                 </li>
                             {% endif %}
+                            <li class="list-group-item detail">
+                                <div class="me-auto">
+                                    <div class="detail_header">
+                                        Geschichtsanzahl
+                                    </div>
+                                    <div class="detail_content">
+                                        {{ book.stories }}
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="list-group-item detail bottom">
+                                <div class="me-auto">
+                                    <div class="detail_header">
+                                        Seitenanzahl
+                                    </div>
+                                    <div class="detail_content">
+                                        {{ book.pages }}
+                                    </div>
+                                </div>
+                            </li>
                         </ol>
                     </div>
                 </div>

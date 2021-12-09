@@ -6,6 +6,13 @@ from .filters import LTBFilter, LTBCompleteFilter
 
 
 def ltb_list(request, s_type: str):
+    """
+    TODO: Docstring
+
+    :param request:
+    :param s_type:
+    :return:
+    """
     paginate_by = request.GET.get('paginate_by', 30) or 30
     if s_type == "all":
         ltbs = LTB.objects.all()
@@ -34,6 +41,13 @@ def ltb_list(request, s_type: str):
 
 
 def book_detail(request, slug: str):
+    """
+    TODO: Docstring
+
+    :param request:
+    :param slug:
+    :return:
+    """
     book = get_object_or_404(LTB, slug=slug)
 
     return render(request,

@@ -3,17 +3,29 @@ from django.db.models import Count
 from django.db.models import F
 
 from stock.models import Quant
-from ltb.models import LTB, LTBType, LTBNumberSet, LTBEdition
+from ltb.models import LTB, LTBType, LTBNumberSet, LTBEdition, LTBNumber
 
 register = template.Library()
 
 
-def get_all1_numbers(ltb_type):
+def get_all_numbers(ltb_type):
+    """
+    TODO: Docstring
+
+    :param ltb_type:
+    :return:
+    """
     number_query_all = LTBNumberSet.objects.filter(ltb_type=ltb_type).all()
     return len(number_query_all)
 
 
 def get_missing_books(ltb_type):
+    """
+    TODO: Docstring
+
+    :param ltb_type:
+    :return:
+    """
     existing_number_ids = list(
         Quant.objects.values_list('book__ltb_edition__ltb_number_set__id', flat=True))
     number_query_missing = LTBNumberSet.objects.exclude(id__in=existing_number_ids).filter(ltb_type=ltb_type).all()
@@ -31,6 +43,13 @@ def get_missing_books(ltb_type):
 
 @register.simple_tag()
 def get_dict_value(data, key):
+    """
+    TODO: Docstring
+
+    :param data:
+    :param key:
+    :return:
+    """
     if isinstance(data, dict):
         try:
             return data[key]
@@ -70,23 +89,30 @@ def format_all_missing_data(list):
 
 @register.simple_tag()
 def get_stock_number_data():
+    """
+    TODO: Docstring
+
+    :return:
+    """
     data = {}
 
-    all_number_query_exist = LTBNumberSet.objects.filter(editions__ltbs__quants__isnull=False)
-    all_number_query_missing = LTBNumberSet.objects.filter(editions__ltbs__quants__isnull=True)
+    all_number_set = LTBNumberSet.objects.all()
 
     for ltb_type in LTBType.objects.all():
-        # Hoping that Django filters without DB access in the QuerySet
-        number_query_exist = all_number_query_exist.filter(ltb_type=ltb_type)
-        number_query_missing = all_number_query_missing.filter(ltb_type=ltb_type)
+
+        type_number_query_set = all_number_set.filter(ltb_type=ltb_type)
+        number_query_exist = type_number_query_set.filter(editions__ltbs__quants__isnull=False).distinct()
+        number_query_missing = type_number_query_set.exclude(id__in=number_query_exist.values_list('id', flat=True))
+
+        missing_numbers = list(
+            map(lambda number: str(number).zfill(3),
+                list(number_query_missing.values_list('ltb_number', flat=True))))
 
         data[ltb_type.code] = {
             'name': ltb_type.name,
             'code': ltb_type.code,
             'count_exists': len(number_query_exist),
-            'count_all': get_all1_numbers(ltb_type),
-            'missing_numbers': list(
-                map(lambda number: str(number).zfill(3),
-                    list(number_query_missing.values_list('ltb_number', flat=True)))),
+            'count_all': len(type_number_query_set),
+            'missing_numbers': missing_numbers,
         }
     return data

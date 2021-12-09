@@ -7,6 +7,9 @@ from .scraper import LTBScraper
 
 
 class LTBType(models.Model):
+    """
+    TODO: Docstring
+    """
     name = models.CharField("Name", max_length=255)
     code = models.CharField("Code", max_length=10, unique=True)
     auto_url = models.BooleanField("Set number url")
@@ -15,29 +18,69 @@ class LTBType(models.Model):
     slug = models.SlugField(max_length=3, unique=True)
 
     class Meta:
+        """
+        TODO: Docstring
+        """
         ordering = ['code']
 
     def __str__(self):
+        """
+        TODO: Docstring
+
+        :return:
+        """
         return str(self.code)
 
     def create_slug(self):
+        """
+        TODO: Docstring
+
+        :return:
+        """
         return self
 
     def save(self, *args, **kwargs):
+        """
+        TODO: Docstring
+
+        :param args:
+        :param kwargs:
+        :return:
+        """
         if not self.id or self.slug != slugify(self.create_slug()):
             self.slug = slugify(self.create_slug())
         super().save(*args, **kwargs)
 
     def first_number(self):
+        """
+        TODO: Docstring
+
+        :return:
+        """
         return self.sets.first()
 
     def last_number(self):
+        """
+        TODO: Docstring
+
+        :return:
+        """
         return self.sets.last()
 
     def all_numbers(self):
+        """
+        TODO: Docstring
+
+        :return:
+        """
         return self.sets.all()
 
     def create_books(self):
+        """
+        TODO: Docstring
+
+        :return:
+        """
         for number in range(1, self.current_number + 1):
             ltb_number = LTBNumber.objects.filter(number=number).first()
             if not ltb_number:
@@ -51,27 +94,60 @@ class LTBType(models.Model):
 
 
 class LTBNumber(models.Model):
+    """
+    TODO: Docstring
+    """
     number = models.PositiveIntegerField("Number", unique=True)
     slug = models.SlugField(max_length=3, unique=True)
 
     class Meta:
+        """
+        TODO: Docstring
+        """
         ordering = ['number']
 
     def filled_number(self):
+        """
+        TODO: Docstring
+
+        :return:
+        """
         return f"{str(self.number).zfill(3)}"
 
     def __str__(self):
+        """
+        TODO: Docstring
+
+        :return:
+        """
         return self.filled_number()
 
     def create_slug(self):
+        """
+        TODO: Docstring
+
+        :return:
+        """
         return self.filled_number()
 
     def save(self, *args, **kwargs):
+        """
+        TODO: Docstring
+
+        :param args:
+        :param kwargs:
+        :return:
+        """
         if not self.id or self.slug != slugify(self.create_slug()):
             self.slug = slugify(self.create_slug())
         super().save(*args, **kwargs)
 
     def get_next_number(self):
+        """
+        TODO: Docstring
+
+        :return:
+        """
         all_numbers = LTBNumber.objects.all()
         filtered_numbers = all_numbers.filter(number__gte=self.number)
         excluded_numbers = filtered_numbers.exclude(id=self.id)
@@ -79,6 +155,11 @@ class LTBNumber(models.Model):
         return ordered_numbers.first()
 
     def get_previous_number(self):
+        """
+        TODO: Docstring
+
+        :return:
+        """
         all_numbers = LTBNumber.objects.all()
         filtered_numbers = all_numbers.filter(number__lte=self.number)
         excluded_numbers = filtered_numbers.exclude(id=self.id)
@@ -87,26 +168,49 @@ class LTBNumber(models.Model):
 
 
 class LTBNumberSet(models.Model):
+    """
+    TODO: Docstring
+    """
     ltb_number = models.ForeignKey(LTBNumber, related_name='sets', on_delete=models.CASCADE)
     ltb_type = models.ForeignKey(LTBType, related_name='sets', on_delete=models.CASCADE)
     url = models.CharField("Url", max_length=255, null=True, blank=True)
     slug = models.SlugField(max_length=3, unique=True)
 
     class Meta:
+        """
+        TODO: Docstring
+        """
         ordering = ['ltb_number']
         unique_together = ('ltb_type', 'ltb_number',)
 
     def __str__(self):
+        """
+        TODO: Docstring
+
+        :return:
+        """
         code = self.ltb_type.code
         number = self.ltb_number.filled_number()
         return f"{code}{number}"
 
     def create_slug(self):
+        """
+        TODO: Docstring
+
+        :return:
+        """
         type_slug = self.ltb_type.slug
         number_slug = self.ltb_number.slug
         return f"{type_slug}{number_slug}"
 
     def save(self, *args, **kwargs):
+        """
+        TODO: Docstring
+
+        :param args:
+        :param kwargs:
+        :return:
+        """
         if not self.id or self.slug != slugify(self.create_slug()):
             self.slug = slugify(self.create_slug())
         if not self.url and self.ltb_type.auto_url:
@@ -114,13 +218,28 @@ class LTBNumberSet(models.Model):
         super().save(*args, **kwargs)
 
     def all_editions(self):
+        """
+        TODO: Docstring
+
+        :return:
+        """
         return self.editions.all()
 
     def get_url(self):
+        """
+        TODO: Docstring
+
+        :return:
+        """
         scraper = LTBScraper(self.ltb_number.number, self.ltb_type.type_url)
         return scraper.url
 
     def create_editions(self):
+        """
+        TODO: Docstring
+
+        :return:
+        """
         scraper = LTBScraper(self.ltb_number.number, self.ltb_type.type_url)
         urls = scraper.get_edition_urls()
         data = scraper.get_edition_data(urls)
@@ -153,25 +272,51 @@ class LTBNumberSet(models.Model):
 
 
 class LTBEditionNumber(models.Model):
+    """
+    TODO: Docstring
+    """
     number = models.PositiveIntegerField("Edition number", unique=True)
     slug = models.SlugField(max_length=255, unique=True)
 
     class Meta:
+        """
+        TODO: Docstring
+        """
         ordering = ['number', ]
 
     def __str__(self):
+        """
+        TODO: Docstring
+
+        :return:
+        """
         return f"{self.number}. Auflage"
 
     def create_slug(self):
+        """
+        TODO: Docstring
+
+        :return:
+        """
         return f"e{self.number}"
 
     def save(self, *args, **kwargs):
+        """
+        TODO: Docstring
+
+        :param args:
+        :param kwargs:
+        :return:
+        """
         if not self.id or self.slug != slugify(self.create_slug()):
             self.slug = slugify(self.create_slug())
         super().save(*args, **kwargs)
 
 
 class LTBEdition(models.Model):
+    """
+    TODO: Docstring
+    """
     ltb_number_set = models.ForeignKey(LTBNumberSet, related_name='editions', on_delete=models.CASCADE)
     ltb_edition_number = models.ForeignKey(LTBEditionNumber, related_name='editions', on_delete=models.CASCADE)
     title = models.CharField("Title", max_length=255)
@@ -182,10 +327,18 @@ class LTBEdition(models.Model):
     slug = models.SlugField(max_length=255, unique=True)
 
     class Meta:
+        """
+        TODO: Docstring
+        """
         unique_together = ('ltb_number_set', 'ltb_edition_number')
         ordering = ['ltb_number_set', 'ltb_edition_number']
 
     def __str__(self):
+        """
+        TODO: Docstring
+
+        :return:
+        """
         type_string = self.ltb_number_set.ltb_type.code
         number_string = self.ltb_number_set.ltb_number.filled_number()
         title_string = self.title
@@ -193,18 +346,38 @@ class LTBEdition(models.Model):
         return f"{type_string}{number_string} - {title_string} {edition_string}"
 
     def create_slug(self):
+        """
+        TODO: Docstring
+
+        :return:
+        """
         number_slug = self.ltb_number_set.slug
         edition_number_slug = self.ltb_edition_number.slug
         return f"{number_slug}_{edition_number_slug}"
 
     def save(self, *args, **kwargs):
+        """
+        TODO: Docstring
+
+        :param args:
+        :param kwargs:
+        :return:
+        """
         if not self.id or self.slug != slugify(self.create_slug()):
             self.slug = slugify(self.create_slug())
         super().save(*args, **kwargs)
 
 
 class InStockManager(models.Manager):
+    """
+    TODO: Docstring
+    """
     def get_queryset(self):
+        """
+        TODO: Docstring
+
+        :return:
+        """
         id_list = []
         query_set = super(InStockManager, self).get_queryset()
         for book in query_set:
@@ -216,7 +389,15 @@ class InStockManager(models.Manager):
 
 
 class NotInStockManager(models.Manager):
+    """
+    TODO: Docstring
+    """
     def get_queryset(self):
+        """
+        TODO: Docstring
+
+        :return:
+        """
         id_list = []
         query_set = super(NotInStockManager, self).get_queryset()
         for book in query_set:
@@ -228,6 +409,9 @@ class NotInStockManager(models.Manager):
 
 
 class LTB(models.Model):
+    """
+    TODO: Docstring
+    """
     ltb_edition = models.ForeignKey(LTBEdition, related_name='ltbs', on_delete=models.CASCADE)
     name = models.CharField("Name", max_length=255, null=True, blank=True)
     complete_name = models.CharField("Complete Name", max_length=255, null=True, blank=True)
@@ -241,42 +425,112 @@ class LTB(models.Model):
     not_in_stock = NotInStockManager()
 
     class Meta:
+        """
+        TODO: Docstring
+        """
         unique_together = ('ltb_edition', 'sort')
         ordering = ['ltb_edition__ltb_number_set__ltb_type', 'ltb_edition__ltb_number_set__ltb_number',
                     'ltb_edition__ltb_edition_number', 'sort']
 
     @property
     def complete_name_calc(self):
+        """
+        TODO: Docstring
+
+        :return:
+        """
         title_string = self.ltb_edition.title
         ltb_string = f" ({self.name})" if self.name else ""
         return f"{title_string}{ltb_string}"
 
     @property
     def edition(self):
+        """
+        TODO: Docstring
+
+        :return:
+        """
         edition_string = f"{self.ltb_edition.ltb_edition_number.number}. Auflage"
         return edition_string
 
     @property
+    def edition_id(self):
+        """
+        TODO: Docstring
+
+        :return:
+        """
+        return self.ltb_edition.ltb_edition_number.id
+
+    @property
     def number(self):
+        """
+        TODO: Docstring
+
+        :return:
+        """
         return self.ltb_edition.ltb_number_set.ltb_number.filled_number()
 
     @property
+    def number_id(self):
+        """
+        TODO: Docstring
+
+        :return:
+        """
+        return self.ltb_edition.ltb_number_set.ltb_number.id
+
+    @property
     def type(self):
+        """
+        TODO: Docstring
+
+        :return:
+        """
         return self.ltb_edition.ltb_number_set.ltb_type.name
 
     @property
+    def type_id(self):
+        """
+        TODO: Docstring
+
+        :return:
+        """
+        return self.ltb_edition.ltb_number_set.ltb_type.id
+
+    @property
     def stories(self):
+        """
+        TODO: Docstring
+
+        :return:
+        """
         return self.ltb_edition.stories
 
     @property
     def pages(self):
+        """
+        TODO: Docstring
+
+        :return:
+        """
         return self.ltb_edition.pages
 
     @property
     def release_date(self):
+        """
+        TODO: Docstring
+
+        :return:
+        """
         return self.ltb_edition.release_date
 
     def __str__(self):
+        """
+        TODO: Docstring
+
+        :return:
+        """
         type_string = self.ltb_edition.ltb_number_set.ltb_type.code
         number_string = self.number
         name = self.complete_name
@@ -284,14 +538,31 @@ class LTB(models.Model):
         return f"{type_string}{number_string} - {name} {edition_string}"
 
     def create_slug(self):
+        """
+        TODO: Docstring
+
+        :return:
+        """
         edition_slug = self.ltb_edition.slug
         return f"{edition_slug}_{self.sort}"
 
     def get_absolute_url(self):
+        """
+        TODO: Docstring
+
+        :return:
+        """
         return reverse('ltb:book_detail',
                        args=[self.slug])
 
     def save(self, *args, **kwargs):
+        """
+        TODO: Docstring
+
+        :param args:
+        :param kwargs:
+        :return:
+        """
         if not self.id or self.slug != slugify(self.create_slug()):
             self.slug = slugify(self.create_slug())
         if not self.image and self.image_url:
@@ -304,6 +575,11 @@ class LTB(models.Model):
         super().save(*args, **kwargs)
 
     def next_ltb(self):
+        """
+        TODO: Docstring
+
+        :return:
+        """
         ltb_number = self.ltb_edition.ltb_number_set.ltb_number.get_next_number()
         if ltb_number:
             ltb = LTB.objects.filter(
@@ -314,6 +590,11 @@ class LTB(models.Model):
         return None
 
     def previous_ltb(self):
+        """
+        TODO: Docstring
+
+        :return:
+        """
         ltb_number = self.ltb_edition.ltb_number_set.ltb_number.get_previous_number()
         if ltb_number:
             ltb = LTB.objects.filter(
@@ -324,30 +605,60 @@ class LTB(models.Model):
         return None
 
     def all_ltb_editions(self):
+        """
+        TODO: Docstring
+
+        :return:
+        """
         editions = LTB.objects.filter(ltb_edition__ltb_number_set=self.ltb_edition.ltb_number_set,
                                       sort=1).all()
         return editions
 
     def ltb_editions_count(self):
+        """
+        TODO: Docstring
+
+        :return:
+        """
         editions = self.all_ltb_editions()
         if editions:
             return len(editions)
         return 0
 
     def all_ltb_versions(self):
+        """
+        TODO: Docstring
+
+        :return:
+        """
         versions = LTB.objects.filter(ltb_edition=self.ltb_edition).all()
         return versions
 
     def ltb_versions_count(self):
+        """
+        TODO: Docstring
+
+        :return:
+        """
         versions = self.all_ltb_versions()
         if versions:
             return len(versions)
         return 0
 
     def inventory_count(self):
+        """
+        TODO: Docstring
+
+        :return:
+        """
         return len(self.quants.all())
 
     def have_first_edition(self):
+        """
+        TODO: Docstring
+
+        :return:
+        """
         quant_count = len(self.quants.filter(is_first_edition=1))
         if quant_count > 0:
             return True

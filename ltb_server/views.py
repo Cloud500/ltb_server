@@ -5,6 +5,12 @@ from .forms import LoginForm
 
 
 def index(request):
+    """
+    TODO: Docstring
+
+    :param request:
+    :return:
+    """
     message = ""
 
     if request.method == 'POST':

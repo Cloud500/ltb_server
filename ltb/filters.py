@@ -4,6 +4,9 @@ from .models import LTB, LTBType, LTBNumber, LTBEditionNumber
 
 
 class LTBFilter(django_filters.FilterSet):
+    """
+    TODO: Docstring
+    """
     ON_STOCK_CHOICES = {
         (True, 'In Besitz'),
         (False, 'Nicht in Besitz')
@@ -25,11 +28,22 @@ class LTBFilter(django_filters.FilterSet):
                                            empty_label="Alle")
 
     class Meta:
+        """
+        TODO: Docstring
+        """
         model = LTB
         fields = ['complete_name', 'number', 'edition']
 
     @staticmethod
     def filter_data(queryset, name, value):
+        """
+        TODO: Docstring
+
+        :param queryset:
+        :param name:
+        :param value:
+        :return:
+        """
         if name == 'on_stock':
             if value:
                 id_list = list(LTB.in_stock.values_list('id', flat=True))
@@ -45,17 +59,31 @@ class LTBFilter(django_filters.FilterSet):
 
 
 class LTBCompleteFilter(LTBFilter):
+    """
+    TODO: Docstring
+    """
     type = django_filters.ModelChoiceFilter(label='Typ',
                                             queryset=LTBType.objects.all(),
                                             method='filter_data',
                                             empty_label="Alle")
 
     class Meta:
+        """
+        TODO: Docstring
+        """
         model = LTB
         fields = ['complete_name', 'number', 'edition', 'type', 'on_stock']
 
     @staticmethod
     def filter_data(queryset, name, value):
+        """
+        TODO: Docstring
+
+        :param queryset:
+        :param name:
+        :param value:
+        :return:
+        """
         queryset = LTBFilter.filter_data(queryset, name, value)
         if name == 'type':
             queryset = queryset.filter(ltb_edition__ltb_number_set__ltb_type=value)

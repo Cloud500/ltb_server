@@ -5,9 +5,12 @@ from ltb.models import LTBType, LTBNumber, LTBEditionNumber
 
 
 class QuantFilter(django_filters.FilterSet):
+    """
+    TODO: Docstring
+    """
     ON_STOCK_CHOICES = {
-        (True, 'In Besitz'),
-        (False, 'Nicht in Besitz')
+        (True, 'Original'),
+        (False, 'Nachdruck')
     }
 
     complete_name = django_filters.CharFilter(label='Name',
@@ -20,32 +23,63 @@ class QuantFilter(django_filters.FilterSet):
                                                queryset=LTBEditionNumber.objects.all(),
                                                method='filter_data',
                                                empty_label="Alle")
+    first_edition = django_filters.ChoiceFilter(label="Druck",
+                                                choices=ON_STOCK_CHOICES,
+                                                method='filter_data',
+                                                empty_label="Alle")
 
     class Meta:
+        """
+        TODO: Docstring
+        """
         model = Quant
-        fields = ['complete_name', 'number', 'edition']
+        fields = ['complete_name', 'number', 'edition', 'first_edition']
 
     @staticmethod
     def filter_data(queryset, name, value):
+        """
+        TODO: Docstring
+
+        :param queryset:
+        :param name:
+        :param value:
+        :return:
+        """
         if name == 'number':
             queryset = queryset.filter(book__ltb_edition__ltb_number_set__ltb_number=value)
         if name == 'edition':
             queryset = queryset.filter(book__ltb_edition__ltb_edition_number=value)
+        if name == 'first_edition':
+            queryset = queryset.filter(is_first_edition=value)
         return queryset
 
 
 class QuantCompleteFilter(QuantFilter):
+    """
+    TODO: Docstring
+    """
     type = django_filters.ModelChoiceFilter(label='Typ',
                                             queryset=LTBType.objects.all(),
                                             method='filter_data',
                                             empty_label="Alle")
 
     class Meta:
+        """
+        TODO: Docstring
+        """
         model = Quant
-        fields = ['complete_name', 'number', 'edition', 'type']
+        fields = ['complete_name', 'number', 'edition', 'first_edition', 'type']
 
     @staticmethod
     def filter_data(queryset, name, value):
+        """
+        TODO: Docstring
+
+        :param queryset:
+        :param name:
+        :param value:
+        :return:
+        """
         queryset = QuantFilter.filter_data(queryset, name, value)
         if name == 'type':
             queryset = queryset.filter(book__ltb_edition__ltb_number_set__ltb_type=value)

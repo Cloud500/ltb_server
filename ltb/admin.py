@@ -1,18 +1,27 @@
 from django.contrib import admin
-
-from .admin_forms import LTBTypeForm, LTBNumberForm, LTBNumberSetForm, LTBEditionNumberForm, LTBEditionForm, \
-    LTBForm
+from .admin_forms import LTBTypeForm, LTBNumberForm, LTBNumberSetForm, LTBEditionNumberForm, LTBEditionForm, LTBForm
 from .models import LTBType, LTBNumber, LTBNumberSet, LTBEditionNumber, LTBEdition, LTB
 
 
 @admin.action(description='Create All Books for this Type')
 def create_books(modeladmin, request, queryset):
+    """
+    TODO: Docstring
+
+    :param modeladmin:
+    :param request:
+    :param queryset:
+    :return:
+    """
     for type in queryset:
         type.create_books()
 
 
 @admin.register(LTBType)
 class LTBTypeAdmin(admin.ModelAdmin):
+    """
+    TODO: Docstring
+    """
     form = LTBTypeForm
 
     list_display = ('name', 'code', 'auto_url', 'type_url')
@@ -23,6 +32,14 @@ class LTBTypeAdmin(admin.ModelAdmin):
 
 @admin.action(description='Create Editions for this Numbers')
 def create_editions(modeladmin, request, queryset):
+    """
+    TODO: Docstring
+
+    :param modeladmin:
+    :param request:
+    :param queryset:
+    :return:
+    """
     for number in queryset:
         if number.url:
             number.create_editions()
@@ -30,6 +47,9 @@ def create_editions(modeladmin, request, queryset):
 
 @admin.register(LTBNumber)
 class LTBNumberAdmin(admin.ModelAdmin):
+    """
+    TODO: Docstring
+    """
     form = LTBNumberForm
 
     list_display = ('number',)
@@ -39,6 +59,9 @@ class LTBNumberAdmin(admin.ModelAdmin):
 
 @admin.register(LTBNumberSet)
 class LTBNumberSetAdmin(admin.ModelAdmin):
+    """
+    TODO: Docstring
+    """
     form = LTBNumberSetForm
 
     list_display = ('ltb_number', 'ltb_type', 'url')
@@ -51,6 +74,9 @@ class LTBNumberSetAdmin(admin.ModelAdmin):
 
 @admin.register(LTBEditionNumber)
 class LTBEditionNumberAdmin(admin.ModelAdmin):
+    """
+    TODO: Docstring
+    """
     form = LTBEditionNumberForm
 
     list_display = ('number',)
@@ -60,6 +86,9 @@ class LTBEditionNumberAdmin(admin.ModelAdmin):
 
 @admin.register(LTBEdition)
 class LTBEditionAdmin(admin.ModelAdmin):
+    """
+    TODO: Docstring
+    """
     form = LTBEditionForm
 
     list_display = ('ltb_number_set', 'ltb_edition_number', 'title')
@@ -70,6 +99,9 @@ class LTBEditionAdmin(admin.ModelAdmin):
 
 @admin.register(LTB)
 class LTBAdmin(admin.ModelAdmin):
+    """
+    TODO: Docstring
+    """
     form = LTBForm
 
     list_display = ('ltb_edition', 'name', 'sort')

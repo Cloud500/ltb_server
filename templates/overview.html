@@ -2,17 +2,17 @@
 {% load stock_data %}
 {% block content %}
     <div class="col d-flex align-items-stretch pb-3">
-        <div class="card h-100 bg-yellow text-dark" style="border:none;width:100%;height:100%;">
+        <div class="card index h-100" style="border:none;width:100%;height:100%;">
             <div class="card-body">
                 <h5 class="card-title">
                     Übersicht:
                 </h5>
                 {% get_stock_number_data as data %}
                 {% for key, type in data.items %}
-                    <div class="card bg-yellow text-dark" style="border:none;width:auto;height:auto;">
+                    <div class="card index" style="border:none;width:auto;height:auto;">
                         <div class="card-body">
                             <ol class="list-group">
-                                <li class="list-group-item d-flex justify-content-between align-items-start bg-yellow">
+                                <li class="list-group-item overview d-flex justify-content-between align-items-start">
                                     <div class=" me-auto">
                                         <div class="fw-bold">{{ type.name }}</div>
                                         {{ type.count_exists }} von {{ type.count_all }} Büchern
@@ -26,7 +26,7 @@
                             </ol>
                             <div class="collapse multi-collapse" id="collapse_{{ type.code }}">
                                 <ol class="list-group">
-                                    <li class="list-group-item d-flex justify-content-between align-items-start bg-yellow">
+                                    <li class="list-group-item overview d-flex justify-content-between align-items-start">
                                         <div class=" me-auto">
                                             <div class="fw-bold">Fehlende Nummern:</div>
                                             {% for number in type.missing_numbers %}

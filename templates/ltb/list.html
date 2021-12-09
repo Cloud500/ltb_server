@@ -11,34 +11,7 @@
         <div class="row justify-content-center align-items-center">
             {% for book in books %}
                 <div class="col-auto pb-4">
-                    <div class="card h-100 bg-yellow text-dark" style="border:none;max-width:150px;height:auto;">
-                        <div class="position-relative">
-                            <img src="
-                                {% if book.image %}
-                                    {{ book.image.url }}
-                                {% else %}
-                                    {% static 'images/not_found.png' %}
-                                {% endif %}"
-                                 class="card-img-top" alt="{{ book.number }}">
-                            {% if book.inventory_count > 0 %}
-                                <a href="#"> {# TODO: link zu den Büchern #}
-                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill
-                                    bg_badge {% if book.have_first_edition %}first_edition{% endif %}">
-                                    {{ book.inventory_count }}
-                                </span>
-                                </a>
-                            {% endif %}
-                        </div>
-                        <div class="card-body">
-                            <p class="card-title">
-                                {{ book.number }}
-                            </p>
-                            <p class="card-text text-muted" style="font-size:12px">
-                                {{ book.edition }}
-                            </p>
-                            <a href="{{ book.get_absolute_url }}" class="stretched-link"></a>
-                        </div>
-                    </div>
+                    {% include "ltb/book.html" %}
                 </div>
             {% empty %}
                 <div class="col-auto pb-4 ">
@@ -48,5 +21,4 @@
         </div>
     </div>
     {% include "pagination.html" with page=books %}
-
 {% endblock %}

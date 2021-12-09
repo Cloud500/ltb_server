@@ -1,7 +1,7 @@
 {% load static %}
 {% load widget_tweaks %}
 {% block content %}
-    <div class="card bg-yellow text-dark" style="border:none;width:100%;height:auto;">
+    <div class="card logout" style="border:none;width:100%;height:auto;">
         <div class="card-body">
             <form method="post" name="logout">
                 {% csrf_token %}
@@ -17,7 +17,7 @@
                 <div class="row justify-content-center align-items-center">
                     <div class="col-auto py-2">
                         <input type="hidden" name="logout" value="1"/>
-                        <button type="submit" class="btn btn-red">Ausloggen</button>
+                        <button type="submit" class="btn logout">Ausloggen</button>
                     </div>
                 </div>
             </form>

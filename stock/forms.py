@@ -6,6 +6,9 @@ from .models import Quant
 
 
 class AddBookForm(forms.ModelForm):
+    """
+    TODO: Docstring
+    """
     ON_STOCK_CHOICES = {
         (False, 'Nein'),
         (True, 'Ja')
@@ -21,10 +24,19 @@ class AddBookForm(forms.ModelForm):
     first_edition = forms.ChoiceField(label="Ist Erstausgabe", choices=ON_STOCK_CHOICES)
 
     class Meta:
+        """
+        TODO: Docstring
+        """
         model = Quant
         fields = ('ltb_type', 'number', 'ltb_edition', 'first_edition')
 
     def save(self, commit=True):
+        """
+        TODO: Docstring
+
+        :param commit:
+        :return:
+        """
         message = {}
         valid_data = True
         new_data = dict(self.data)

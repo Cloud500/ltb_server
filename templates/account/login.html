@@ -1,7 +1,7 @@
 {% load static %}
 {% load widget_tweaks %}
 {% block content %}
-    <div class="card bg-yellow text-dark" style="border:none;width:100%;height:auto;">
+    <div class="card login" style="border:none;width:100%;height:auto;">
         <div class="card-body">
             <form method="post" name="login">
                 {% csrf_token %}
@@ -33,15 +33,15 @@
                 {% for field in form.visible_fields %}
                     <div class="row justify-content-md-center">
                         <div class="mb-3">
-                            <label for="exampleInputEmail1" class="form-label">{{ field.label }}</label>
-                            {{ field|add_class:'form-control bg-warning border-0' }}
+                            <label for="exampleInputEmail1" class="form-label login">{{ field.label }}</label>
+                            {{ field|add_class:'form-control login' }}
                         </div>
                     </div>
                 {% endfor %}
 
                 <div class="row justify-content-center align-items-center">
                     <div class="col-auto py-2">
-                        <button type="submit" class="btn btn-red">Einloggen</button>
+                        <button type="submit" class="btn login">Einloggen</button>
                     </div>
                 </div>
             </form>

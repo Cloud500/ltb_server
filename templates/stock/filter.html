@@ -2,7 +2,7 @@
 <div class="container container-fluid">
     <div class="row justify-content-center align-items-center">
         <div class="col-auto py-2">
-            <a class="btn btn-red"
+            <a class="btn filter"
                data-bs-toggle="collapse"
                href="#collapseFilter"
                role="button"
@@ -26,10 +26,10 @@
             <div class="row justify-content-center align-items-center">
                 {% for field in form.visible_fields %}
                     <div class="col-auto py-2">
-                        <div class="input-group bg-yellow rounded">
-                            <div class="input-group-text bg-yellow border-0">{{ field.label }}</div>
+                        <div class="input-group">
+                            <div class="input-group-text filter">{{ field.label }}</div>
                             {{ field.errors }}
-                            {{ field|add_class:'form-control bg-warning border-0' }}
+                            {{ field|add_class:'form-control filter' }}
                             {{ field.help_text }}
                         </div>
                     </div>
@@ -37,7 +37,7 @@
             </div>
             <div class="row justify-content-center align-items-center">
                 <div class="col-auto py-2">
-                    <button type="submit" class="btn btn-red">Filter</button>
+                    <button type="submit" class="btn filter">Filter</button>
                 </div>
             </div>
         </form>
