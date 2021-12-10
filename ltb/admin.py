@@ -1,6 +1,22 @@
+from datetime import timedelta, timezone, datetime
+
 from django.contrib import admin
 from .admin_forms import LTBTypeForm, LTBNumberForm, LTBNumberSetForm, LTBEditionNumberForm, LTBEditionForm, LTBForm
 from .models import LTBType, LTBNumber, LTBNumberSet, LTBEditionNumber, LTBEdition, LTB
+
+
+@admin.action(description='Fetch next number')
+def get_next_number(modeladmin, request, queryset):
+    """
+    TODO: Docstring
+
+    :param modeladmin:
+    :param request:
+    :param queryset:
+    :return:
+    """
+    for ltb_type in queryset:
+        ltb_type.fetch_next_number()
 
 
 @admin.action(description='Create All Books for this Type')
@@ -24,10 +40,10 @@ class LTBTypeAdmin(admin.ModelAdmin):
     """
     form = LTBTypeForm
 
-    list_display = ('name', 'code', 'auto_url', 'type_url')
+    list_display = ('name', 'code', 'auto_url', 'auto_fetch', 'type_url')
     search_fields = ('name', 'code')
     ordering = ('code',)
-    actions = [create_books, ]
+    actions = [create_books, get_next_number]
 
 
 @admin.action(description='Create Editions for this Numbers')

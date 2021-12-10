@@ -26,7 +26,7 @@ class LTBTypeForm(forms.ModelForm):
         TODO: Docstring
         """
         model = LTBType
-        fields = ('name', 'code', 'current_number', 'auto_url', 'type_url')
+        fields = ('name', 'code', 'current_number', 'auto_url', 'auto_fetch', 'type_url')
 
 
 class LTBNumberForm(forms.ModelForm):

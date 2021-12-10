@@ -15,6 +15,7 @@ class LTBType(models.Model):
     auto_url = models.BooleanField("Set number url")
     type_url = models.CharField("Type Url", max_length=255, default="/ausgaben/alle-ausgaben", null=True, blank=True)
     current_number = models.PositiveIntegerField("Current Number", null=True, blank=True)
+    auto_fetch = models.BooleanField("Auto fetch books")
     slug = models.SlugField(max_length=3, unique=True)
 
     class Meta:
@@ -22,6 +23,9 @@ class LTBType(models.Model):
         TODO: Docstring
         """
         ordering = ['code']
+        permissions = [
+            ('fetch_new_books', "Can fetch new books"),
+        ]
 
     def __str__(self):
         """
@@ -75,6 +79,33 @@ class LTBType(models.Model):
         """
         return self.sets.all()
 
+    @staticmethod
+    def get_or_create_number(number: int):
+        """
+        TODO: Docstring
+
+        :param number:
+        :return:
+        """
+        ltb_number = LTBNumber.objects.filter(number=number).first()
+        if not ltb_number:
+            ltb_number = LTBNumber(number=number)
+            ltb_number.save()
+        return ltb_number
+
+    def get_or_create_number_set(self, ltb_number):
+        """
+        TODO: Docstring
+
+        :param ltb_number:
+        :return:
+        """
+        ltb_number_set = LTBNumberSet.objects.filter(ltb_number=ltb_number, ltb_type=self).first()
+        if not ltb_number_set:
+            ltb_number_set = LTBNumberSet(ltb_number=ltb_number, ltb_type=self)
+            ltb_number_set.save()
+        return ltb_number_set
+
     def create_books(self):
         """
         TODO: Docstring
@@ -82,15 +113,28 @@ class LTBType(models.Model):
         :return:
         """
         for number in range(1, self.current_number + 1):
-            ltb_number = LTBNumber.objects.filter(number=number).first()
-            if not ltb_number:
-                ltb_number = LTBNumber(number=number)
-                ltb_number.save()
-            ltb_number_set = LTBNumberSet.objects.filter(ltb_number=ltb_number, ltb_type=self).first()
-            if not ltb_number_set:
-                ltb_number_set = LTBNumberSet(ltb_number=ltb_number, ltb_type=self)
-                ltb_number_set.save()
+            ltb_number = self.get_or_create_number(number)
+            ltb_number_set = self.get_or_create_number_set(ltb_number)
             ltb_number_set.create_editions()
+
+    def fetch_next_number(self):
+        """
+        TODO: Docstring
+
+        :return:
+        """
+        if self.auto_fetch:
+            number = self.current_number + 1
+            type_url = self.type_url
+            scraper = LTBScraper(number, type_url)
+            urls = scraper.get_edition_urls()
+            if urls:
+                self.current_number = number
+                self.save()
+                for _ in urls:
+                    ltb_number = self.get_or_create_number(number)
+                    ltb_number_set = self.get_or_create_number_set(ltb_number)
+                    ltb_number_set.create_editions()
 
 
 class LTBNumber(models.Model):
@@ -372,6 +416,7 @@ class InStockManager(models.Manager):
     """
     TODO: Docstring
     """
+
     def get_queryset(self):
         """
         TODO: Docstring
@@ -392,6 +437,7 @@ class NotInStockManager(models.Manager):
     """
     TODO: Docstring
     """
+
     def get_queryset(self):
         """
         TODO: Docstring
