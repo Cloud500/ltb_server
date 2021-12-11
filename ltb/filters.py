@@ -11,6 +11,10 @@ class LTBFilter(django_filters.FilterSet):
         (True, 'In Besitz'),
         (False, 'Nicht in Besitz')
     }
+    READ_CHOICES = {
+        (True, 'Gelesen'),
+        (False, 'Ungelesen')
+    }
 
     complete_name = django_filters.CharFilter(label='Name',
                                               lookup_expr='icontains')
@@ -26,13 +30,17 @@ class LTBFilter(django_filters.FilterSet):
                                            choices=ON_STOCK_CHOICES,
                                            method='filter_data',
                                            empty_label="Alle")
+    read = django_filters.ChoiceFilter(label='Gelesen',
+                                       choices=READ_CHOICES,
+                                       method='filter_data',
+                                       empty_label="Alle")
 
     class Meta:
         """
         TODO: Docstring
         """
         model = LTB
-        fields = ['complete_name', 'number', 'edition']
+        fields = ['complete_name', 'number', 'edition', 'read']
 
     @staticmethod
     def filter_data(queryset, name, value):
@@ -55,6 +63,8 @@ class LTBFilter(django_filters.FilterSet):
             queryset = queryset.filter(ltb_edition__ltb_number_set__ltb_number=value)
         if name == 'edition':
             queryset = queryset.filter(ltb_edition__ltb_edition_number=value)
+        if name == 'read':
+            queryset = queryset.filter(is_read=value)
         return queryset
 
 
@@ -72,7 +82,7 @@ class LTBCompleteFilter(LTBFilter):
         TODO: Docstring
         """
         model = LTB
-        fields = ['complete_name', 'number', 'edition', 'type', 'on_stock']
+        fields = ['complete_name', 'number', 'edition', 'type', 'read', 'on_stock']
 
     @staticmethod
     def filter_data(queryset, name, value):

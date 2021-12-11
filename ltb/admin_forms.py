@@ -57,6 +57,12 @@ class LTBNumberForm(forms.ModelForm):
 
 class LTBNumberSetForm(forms.ModelForm):
     def save(self, commit=True):
+        """
+        TODO: Docstring
+
+        :param commit:
+        :return:
+        """
         instance = super(LTBNumberSetForm, self).save(commit=commit)
 
         instance.slug = instance.create_slug()
@@ -65,12 +71,21 @@ class LTBNumberSetForm(forms.ModelForm):
         return instance
 
     class Meta:
+        """
+        TODO: Docstring
+        """
         model = LTBNumberSet
         fields = ('ltb_number', 'ltb_type', 'url')
 
 
 class LTBEditionNumberForm(forms.ModelForm):
     def save(self, commit=True):
+        """
+        TODO: Docstring
+
+        :param commit:
+        :return:
+        """
         instance = super(LTBEditionNumberForm, self).save(commit=commit)
 
         instance.slug = instance.create_slug()
@@ -79,12 +94,24 @@ class LTBEditionNumberForm(forms.ModelForm):
         return instance
 
     class Meta:
+        """
+        TODO: Docstring
+        """
         model = LTBEditionNumber
         fields = ('number',)
 
 
 class LTBEditionForm(forms.ModelForm):
+    """
+    TODO: Docstring
+    """
     def save(self, commit=True):
+        """
+        TODO: Docstring
+
+        :param commit:
+        :return:
+        """
         instance = super(LTBEditionForm, self).save(commit=commit)
 
         instance.slug = instance.create_slug()
@@ -93,12 +120,24 @@ class LTBEditionForm(forms.ModelForm):
         return instance
 
     class Meta:
+        """
+        TODO: Docstring
+        """
         model = LTBEdition
         fields = ('ltb_number_set', 'ltb_edition_number', 'url', 'title', 'stories', 'pages', 'release_date')
 
 
 class LTBForm(forms.ModelForm):
+    """
+    TODO: Docstring
+    """
     def save(self, commit=True):
+        """
+        TODO: Docstring
+
+        :param commit:
+        :return:
+        """
         instance = super(LTBForm, self).save(commit=commit)
 
         instance.slug = instance.create_slug()
@@ -107,5 +146,8 @@ class LTBForm(forms.ModelForm):
         return instance
 
     class Meta:
+        """
+        TODO: Docstring
+        """
         model = LTB
-        fields = ('ltb_edition', 'name', 'sort', 'image_url')
+        fields = ('ltb_edition', 'name', 'sort', 'image_url', 'is_read')

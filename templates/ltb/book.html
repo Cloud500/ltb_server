@@ -13,6 +13,9 @@
         {% endif %}
     </div>
     <div class="card-body book">
+        {% if book.is_read %}
+            <div class="ribbon ribbon-top-right"><span></span></div>
+        {% endif %}
         <p class="book-number">
             {{ book.number }}
         </p>

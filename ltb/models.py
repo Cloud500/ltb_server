@@ -16,7 +16,7 @@ class LTBType(models.Model):
     type_url = models.CharField("Type Url", max_length=255, default="/ausgaben/alle-ausgaben", null=True, blank=True)
     current_number = models.PositiveIntegerField("Current Number", null=True, blank=True)
     auto_fetch = models.BooleanField("Auto fetch books")
-    slug = models.SlugField(max_length=3, unique=True)
+    slug = models.SlugField(max_length=255, unique=True)
 
     class Meta:
         """
@@ -142,7 +142,7 @@ class LTBNumber(models.Model):
     TODO: Docstring
     """
     number = models.PositiveIntegerField("Number", unique=True)
-    slug = models.SlugField(max_length=3, unique=True)
+    slug = models.SlugField(max_length=255, unique=True)
 
     class Meta:
         """
@@ -218,7 +218,7 @@ class LTBNumberSet(models.Model):
     ltb_number = models.ForeignKey(LTBNumber, related_name='sets', on_delete=models.CASCADE)
     ltb_type = models.ForeignKey(LTBType, related_name='sets', on_delete=models.CASCADE)
     url = models.CharField("Url", max_length=255, null=True, blank=True)
-    slug = models.SlugField(max_length=3, unique=True)
+    slug = models.SlugField(max_length=255, unique=True)
 
     class Meta:
         """
@@ -310,6 +310,7 @@ class LTBNumberSet(models.Model):
                 special_edition = LTB(
                     ltb_edition=edition,
                     sort=1,
+                    is_read=0,
                     image_url=book_data['image_url']
                 )
                 special_edition.save()
@@ -464,6 +465,7 @@ class LTB(models.Model):
     sort = models.PositiveIntegerField("Sort")
     image_url = models.CharField("Image Url", max_length=255, null=True, blank=True)
     image = models.ImageField("Image", upload_to='cover/', null=True, blank=True)
+    is_read = models.BooleanField("Gelesen")
     slug = models.SlugField(max_length=255, unique=True)
 
     objects = models.Manager()

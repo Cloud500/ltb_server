@@ -7,13 +7,29 @@ from ltb.models import LTBType
 
 
 class FetchNewBook(APIView):
+    """
+    TODO: Docstring
+    """
     @staticmethod
     def _fetch_all_types():
+        """
+        TODO: Docstring
+
+        :return:
+        """
         ltb_types = LTBType.objects.all()
         for ltb_type in ltb_types:
             ltb_type.fetch_next_number()
 
     def post(self, request, *args, **kwargs):
+        """
+        TODO: Docstring
+
+        :param request:
+        :param args:
+        :param kwargs:
+        :return:
+        """
         user = request.data.get('user')
         password = request.data.get('password')
         user = authenticate(request,

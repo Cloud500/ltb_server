@@ -1,5 +1,4 @@
 import requests
-import teaser as teaser
 from bs4 import BeautifulSoup
 from bs4.element import Tag
 from datetime import datetime

@@ -48,8 +48,23 @@ def book_detail(request, slug: str):
     :param slug:
     :return:
     """
-    book = get_object_or_404(LTB, slug=slug)
+    if request.method == "POST":
+        book = get_object_or_404(LTB, slug=slug)
 
-    return render(request,
-                  'ltb/detail.html',
-                  {'book': book})
+        if request.POST.get('read_book'):
+            if book.is_read:
+                book.is_read = False
+            else:
+                book.is_read = True
+            book.save()
+
+        return render(request,
+                      'ltb/detail.html',
+                      {'book': book})
+
+    if request.method == "GET":
+        book = get_object_or_404(LTB, slug=slug)
+
+        return render(request,
+                      'ltb/detail.html',
+                      {'book': book})

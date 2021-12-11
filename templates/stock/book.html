@@ -2,19 +2,28 @@
 <div class="card book h-100 bg-yellow text-dark" style="border:none;max-width:150px;height:auto;">
     <div class="position-relative">
         <img src="
+
+
+
                 {% if quant.book.image %}{{ quant.book.image.url }}{% else %}{% static 'images/not_found.png' %}{% endif %}"
              class="card-img-top book"
              alt="{{ book.number }}">
     </div>
     <div class="card-body book">
-        {% if quant.is_first_edition %}
-        <div class="ribbon ribbon-top-right"><span></span></div>
+        {% if quant.book.is_read %}
+            <div class="ribbon ribbon-top-right"><span></span></div>
         {% endif %}
         <p class="book-number">
             {{ quant.book.number }}
         </p>
         <p class="card-text edition" style="font-size:12px">
             {{ quant.book.edition }}
+            <br/>
+            {% if quant.is_first_edition %}
+                Original
+            {% else %}
+                Nachdruck
+            {% endif %}
         </p>
         {#                            <a href="{{ book.get_absolute_url }}" class="stretched-link"></a>#}
     </div>

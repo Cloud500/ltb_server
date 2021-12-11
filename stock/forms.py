@@ -43,7 +43,8 @@ class AddBookForm(forms.ModelForm):
 
         ltb_type_id = int(new_data.pop('ltb_type', [0, ])[0])
         ltb_edition_id = int(new_data.pop('ltb_edition', [0, ])[0])
-        first_edition = bool(new_data.pop('first_edition', [False, ])[0])
+
+        first_edition = new_data.pop('first_edition', [False, ])[0]
 
         number = new_data.pop('number', [0, ])[0]
         try:

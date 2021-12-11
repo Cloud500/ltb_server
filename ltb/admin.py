@@ -120,6 +120,6 @@ class LTBAdmin(admin.ModelAdmin):
     """
     form = LTBForm
 
-    list_display = ('ltb_edition', 'name', 'sort')
+    list_display = ('ltb_edition', 'name', 'sort', 'is_read')
     search_fields = ('ltb_edition', 'name',)
     ordering = ('ltb_edition', 'sort')

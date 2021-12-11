@@ -114,7 +114,7 @@
     --inventory_first_font_color: var(--white);
     --inventory_first_color: var(--green);
 
-    --ribbon_color: rgba(0, 57, 132, 0.9);
+    --ribbon_color: rgba(183, 15, 22, 0.9);
 }
 
 body {
@@ -375,6 +375,7 @@ div.footer {
 }
 
 .card-text.edition {
+    font-size: 12px;
     color: var(--book_edition_font_color);
     text-align: center;
     font-weight: lighter;

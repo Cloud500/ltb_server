@@ -12,6 +12,10 @@ class QuantFilter(django_filters.FilterSet):
         (True, 'Original'),
         (False, 'Nachdruck')
     }
+    READ_CHOICES = {
+        (True, 'Gelesen'),
+        (False, 'Ungelesen')
+    }
 
     complete_name = django_filters.CharFilter(label='Name',
                                               lookup_expr='icontains')
@@ -27,13 +31,17 @@ class QuantFilter(django_filters.FilterSet):
                                                 choices=ON_STOCK_CHOICES,
                                                 method='filter_data',
                                                 empty_label="Alle")
+    read = django_filters.ChoiceFilter(label='Gelesen',
+                                       choices=READ_CHOICES,
+                                       method='filter_data',
+                                       empty_label="Alle")
 
     class Meta:
         """
         TODO: Docstring
         """
         model = Quant
-        fields = ['complete_name', 'number', 'edition', 'first_edition']
+        fields = ['complete_name', 'number', 'edition', 'first_edition', 'read']
 
     @staticmethod
     def filter_data(queryset, name, value):
@@ -51,6 +59,8 @@ class QuantFilter(django_filters.FilterSet):
             queryset = queryset.filter(book__ltb_edition__ltb_edition_number=value)
         if name == 'first_edition':
             queryset = queryset.filter(is_first_edition=value)
+        if name == 'read':
+            queryset = queryset.filter(book__is_read=value)
         return queryset
 
 
@@ -68,7 +78,7 @@ class QuantCompleteFilter(QuantFilter):
         TODO: Docstring
         """
         model = Quant
-        fields = ['complete_name', 'number', 'edition', 'first_edition', 'type']
+        fields = ['complete_name', 'number', 'edition', 'first_edition', 'read', 'type']
 
     @staticmethod
     def filter_data(queryset, name, value):

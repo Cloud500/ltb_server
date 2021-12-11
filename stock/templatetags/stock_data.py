@@ -106,7 +106,7 @@ def get_stock_number_data():
 
         missing_numbers = list(
             map(lambda number: str(number).zfill(3),
-                list(number_query_missing.values_list('ltb_number', flat=True))))
+                list(number_query_missing.order_by('ltb_number__number').values_list('ltb_number__number', flat=True))))
 
         data[ltb_type.code] = {
             'name': ltb_type.name,
