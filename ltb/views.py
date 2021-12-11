@@ -1,70 +1,69 @@
+from django.views import View
 from django.shortcuts import render, get_object_or_404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.views.generic import DetailView
+from django_filters.views import FilterView
 
 from .models import LTB, LTBType
 from .filters import LTBFilter, LTBCompleteFilter
 
 
-def ltb_list(request, s_type: str):
+class LTBList(FilterView):
     """
     TODO: Docstring
-
-    :param request:
-    :param s_type:
-    :return:
     """
-    paginate_by = request.GET.get('paginate_by', 30) or 30
-    if s_type == "all":
-        ltbs = LTB.objects.all()
-        filter_qs = LTBCompleteFilter(request.GET, queryset=ltbs)
-    else:
-        ltb_type = LTBType.objects.filter(code=s_type.upper()).get()
-        ltbs = LTB.objects.filter(ltb_edition__ltb_number_set__ltb_type=ltb_type).all()  # TODO: Refactor
-        filter_qs = LTBFilter(request.GET, queryset=ltbs)
+    model = LTB
+    filterset_class = LTBCompleteFilter
+    template_name = 'ltb/list.html'
+    paginate_by = 30
 
-    paginator = Paginator(filter_qs.qs, paginate_by)
-    page = request.GET.get('page')
-    form = filter_qs.form
+    def get_queryset(self):
+        """
+        TODO: Docstring
 
-    try:
-        books = paginator.page(page)
-    except PageNotAnInteger:
-        books = paginator.page(1)
-    except EmptyPage:
-        books = paginator.page(paginator.num_pages)
+        :return:
+        """
+        s_type = self.kwargs.get('s_type')
+        if s_type == "all":
+            queryset = LTB.objects.all()
+        else:
+            ltb_type = LTBType.objects.filter(code=s_type.upper()).get()
+            queryset = LTB.objects.filter(ltb_edition__ltb_number_set__ltb_type=ltb_type).all()  # TODO: Refactor
+        return queryset
 
-    return render(request,
-                  'ltb/list.html',
-                  {'page': page,
-                   'form': form,
-                   'books': books})
+    def get_paginate_by(self, queryset):
+        """
+        TODO: Docstring
+
+        :param queryset:
+        :return:
+        """
+        return self.request.GET.get('paginate_by', self.paginate_by)
 
 
-def book_detail(request, slug: str):
+class LTBDetail(DetailView):
     """
     TODO: Docstring
-
-    :param request:
-    :param slug:
-    :return:
     """
-    if request.method == "POST":
-        book = get_object_or_404(LTB, slug=slug)
+    model = LTB
+    template_name = 'ltb/detail.html'
 
+    def post(self, request, *args, **kwargs):
+        """
+        TODO: Docstring
+
+        :param request:
+        :param args:
+        :param kwargs:
+        :return:
+        """
         if request.POST.get('read_book'):
-            if book.is_read:
-                book.is_read = False
+            slug = self.kwargs.get('slug')
+            ltb = get_object_or_404(LTB, slug=slug)
+            if ltb.is_read:
+                ltb.is_read = False
             else:
-                book.is_read = True
-            book.save()
-
-        return render(request,
-                      'ltb/detail.html',
-                      {'book': book})
-
-    if request.method == "GET":
-        book = get_object_or_404(LTB, slug=slug)
-
-        return render(request,
-                      'ltb/detail.html',
-                      {'book': book})
+                ltb.is_read = True
+            ltb.save()
+        response = self.get(request, *args, **kwargs)
+        return response

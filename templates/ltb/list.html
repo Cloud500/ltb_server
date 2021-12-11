@@ -9,7 +9,7 @@
         {% include "ltb/filter.html" %}
         <br>
         <div class="row justify-content-center align-items-center">
-            {% for book in books %}
+            {% for book in ltb_list %}
                 <div class="col-auto pb-4">
                     {% include "ltb/book.html" %}
                 </div>
@@ -20,5 +20,7 @@
             {% endfor %}
         </div>
     </div>
-    {% include "pagination.html" with page=books %}
+    {% if is_paginated %}
+        {% include "pagination.html" with page=books %}
+    {% endif %}
 {% endblock %}

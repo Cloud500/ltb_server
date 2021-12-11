@@ -1,23 +1,23 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %}{{ book.number }} {{ book.complete_name }}{% endblock %}
+{% block title %}{{ ltb.number }} {{ ltb.complete_name }}{% endblock %}
 {% block content %}
     <div class="container-fluid pb-5">
-        <h2 class="pt-3">{{ book.type }}</h2>
+        <h2 class="pt-3">{{ ltb.type }}</h2>
         <hr>
         <div class="row justify-content-center align-items-center pb-3">
             <div class="col-auto">
                 <div class="btn-group btn-group-lg" role="group" aria-label="Book navigation">
                     <button type="button"
                             class="btn navigate"
-                            onclick="location.href='{{ book.previous_ltb.get_absolute_url }}'"
-                            {% if not book.previous_ltb %}disabled{% endif %}>
+                            onclick="location.href='{{ ltb.previous_ltb.get_absolute_url }}'"
+                            {% if not ltb.previous_ltb %}disabled{% endif %}>
                         Vorherige Nummer
                     </button>
                     <button type="button"
                             class="btn navigate"
-                            onclick="location.href='{{ book.next_ltb.get_absolute_url }}'"
-                            {% if not book.next_ltb %}disabled{% endif %}>
+                            onclick="location.href='{{ ltb.next_ltb.get_absolute_url }}'"
+                            {% if not ltb.next_ltb %}disabled{% endif %}>
                         Nächste Nummer
                     </button>
                 </div>
@@ -27,14 +27,14 @@
         <div class="card detail" style="max-width: 100%;">
             <div class="row g-0 p-3">
                 <div class="col-auto mx-auto">
-                    {% if book.image %}
+                    {% if ltb.image %}
                         <div class="position-relative">
-                            <img class="img-fluid rounded-start" src="{{ book.image.url }}" alt="cover"
+                            <img class="img-fluid rounded-start" src="{{ ltb.image.url }}" alt="cover"
                                  style="max-width: 266px;">
-                            {% if book.inventory_count > 0 %}
+                            {% if ltb.inventory_count > 0 %}
                                 <a href="#"> {# TODO: link zu den Büchern #}
-                                    <span class="inventory {% if book.have_first_edition %}first_edition{% endif %}">
-                                    {{ book.inventory_count }}
+                                    <span class="inventory {% if ltb.have_first_edition %}first_edition{% endif %}">
+                                    {{ ltb.inventory_count }}
                                 </span>
                                 </a>
                             {% endif %}
@@ -50,7 +50,7 @@
                                     {% csrf_token %}
                                     <input type="hidden" name="read_book" value="1"/>
                                     <button type="submit" class="btn navigate">
-                                        {% if book.is_read %}
+                                        {% if ltb.is_read %}
                                             Ungelesen
                                         {% else %}
                                             Gelesen
@@ -63,7 +63,7 @@
                 </div>
                 <div class="col">
                     <div class="card-body">
-                        {% if book.is_read %}
+                        {% if ltb.is_read %}
                             <div class="ribbon ribbon-top-right"><span></span></div>
                         {% endif %}
                         <ol class="list-group">
@@ -73,7 +73,7 @@
                                         Nummer
                                     </div>
                                     <div class="detail_content">
-                                        {{ book.number }}
+                                        {{ ltb.number }}
                                     </div>
                                 </div>
                             </li>
@@ -83,7 +83,7 @@
                                         Titel
                                     </div>
                                     <div class="detail_content">
-                                        {{ book.complete_name }}
+                                        {{ ltb.complete_name }}
                                     </div>
                                 </div>
                             </li>
@@ -93,11 +93,11 @@
                                         Erscheinungsdatum
                                     </div>
                                     <div class="detail_content">
-                                        {{ book.release_date|date:"d.m.Y" }}
+                                        {{ ltb.release_date|date:"d.m.Y" }}
                                     </div>
                                 </div>
                             </li>
-                            {% if book.ltb_versions_count > 1 %}
+                            {% if ltb.ltb_versions_count > 1 %}
                                 <li class="list-group-item detail">
                                     <div class="me-auto">
                                         <div class="detail_header">
@@ -105,11 +105,11 @@
                                         </div>
                                         <div class="detail_content">
                                             <div class="btn-group btn-group-sm" role="group" aria-label="Book editions">
-                                                {% for edition in book.all_ltb_versions %}
+                                                {% for edition in ltb.all_ltb_versions %}
                                                     <button type="button"
                                                             class="btn navigate"
                                                             onclick="location.href='{{ edition.get_absolute_url }}'"
-                                                            {% if edition == book %}disabled{% endif %}>
+                                                            {% if edition == ltb %}disabled{% endif %}>
                                                         {{ edition.name }}
                                                     </button>
                                                 {% endfor %}
@@ -118,7 +118,7 @@
                                     </div>
                                 </li>
                             {% endif %}
-                            {% if book.ltb_editions_count > 1 %}
+                            {% if ltb.ltb_editions_count > 1 %}
                                 <li class="list-group-item detail">
                                     <div class="me-auto">
                                         <div class="detail_header">
@@ -126,11 +126,11 @@
                                         </div>
                                         <div class="detail_content">
                                             <div class="btn-group btn-group-sm" role="group" aria-label="Book editions">
-                                                {% for edition in book.all_ltb_editions %}
+                                                {% for edition in ltb.all_ltb_editions %}
                                                     <button type="button"
                                                             class="btn navigate"
                                                             onclick="location.href='{{ edition.get_absolute_url }}'"
-                                                            {% if edition == book %}disabled{% endif %}>
+                                                            {% if edition == ltb %}disabled{% endif %}>
                                                         {{ edition.edition }}
                                                     </button>
                                                 {% endfor %}
@@ -145,7 +145,7 @@
                                         Geschichtsanzahl
                                     </div>
                                     <div class="detail_content">
-                                        {{ book.stories }}
+                                        {{ ltb.stories }}
                                     </div>
                                 </div>
                             </li>
@@ -155,7 +155,7 @@
                                         Seitenanzahl
                                     </div>
                                     <div class="detail_content">
-                                        {{ book.pages }}
+                                        {{ ltb.pages }}
                                     </div>
                                 </div>
                             </li>
