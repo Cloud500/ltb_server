@@ -21,11 +21,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-# SECRET_KEY = 'django-insecure-ktqtb%sc*__9986w3tca@mmp=&g04yv4bcn!gtab^=n*r6$8^x'
 SECRET_KEY = os.environ.get("SECRET_KEY", "hidden")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = True
 DEBUG = int(os.environ.get("DEBUG", default=1))
 
 # ALLOWED_HOSTS = ['*']
@@ -42,6 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_filters',
     'widget_tweaks',
+    'homepage.apps.HomepageConfig',
     'ltb.apps.LtbConfig',
     'stock.apps.StockConfig',
     'api.apps.ApiConfig',
@@ -80,17 +79,6 @@ WSGI_APPLICATION = 'ltb_server.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#         # 'TEST': {
-#         #     'ENGINE': 'django.db.backends.sqlite3',
-#         #     'NAME': BASE_DIR / 'test.sqlite3',
-#         # }
-#     }
-# }
 
 DATABASES = {
     "default": {

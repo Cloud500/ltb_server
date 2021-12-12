@@ -5,9 +5,9 @@
         <div class="card-body">
             <form method="post" name="login">
                 {% csrf_token %}
-                {{ form.non_field_errors }}
+                {{ login_form.non_field_errors }}
 
-                {% for hidden_field in form.hidden_fields %}
+                {% for hidden_field in login_form.hidden_fields %}
                     {{ hidden_field.errors }}
                     {{ hidden_field }}
                 {% endfor %}
@@ -30,7 +30,7 @@
                     </div>
                 {% endif %}
 
-                {% for field in form.visible_fields %}
+                {% for field in login_form.visible_fields %}
                     <div class="row justify-content-md-center">
                         <div class="mb-3">
                             <label for="exampleInputEmail1" class="form-label login">{{ field.label }}</label>
@@ -41,6 +41,7 @@
 
                 <div class="row justify-content-center align-items-center">
                     <div class="col-auto py-2">
+                        <input type="hidden" name="login" value="1"/>
                         <button type="submit" class="btn login">Einloggen</button>
                     </div>
                 </div>

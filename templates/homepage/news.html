@@ -1,9 +1,6 @@
 {% load static %}
-{% load news_data %}
 {% block content %}
-    {% get_news as news_list %}
-
-    {% for news in news_list %}
+    {% for news in news_data %}
         <div class="row">
             <div class="col pb-3">
                 <div class="card news" style="border:none;width:100%;height:auto;">
@@ -16,5 +13,4 @@
             </div>
         </div>
     {% endfor %}
-
 {% endblock %}
