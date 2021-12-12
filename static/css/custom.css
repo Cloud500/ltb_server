@@ -129,15 +129,16 @@ div.header {
 }
 
 div.footer {
+    text-align: center;
+    font-size: 12px;
+    font-weight: lighter;
     color: var(--footer_font_color);
     background-color: var(--footer_background_color);
-    font-weight: lighter !important;
     position: fixed;
     right: 0;
     bottom: 0;
     left: 0;
     z-index: 1030;
-    text-align: center;
 }
 
 /* || Navibar */

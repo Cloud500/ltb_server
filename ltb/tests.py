@@ -413,25 +413,3 @@ class LTBTTestCase(TestCase):
 
         self.assertEqual(len(LTB.in_stock.all()), 3)
         self.assertEqual(len(LTB.not_in_stock.all()), 6)
-
-
-# class LTBViewTestCase(TestCase):
-#     @classmethod
-#     def setUpClass(cls):
-#         ltb_type = LTBType(
-#             name="Lustiges Taschenbuch",
-#             code="LTB",
-#             auto_url=True,
-#             type_url="/ausgaben/alle-ausgaben",
-#             current_number=3,
-#         )
-#         ltb_type.save()
-#         ltb_type.create_books()
-#
-#     @classmethod
-#     def tearDownClass(cls):
-#         path = os.path.abspath('media/cover/')
-#         filelist = [f for f in os.listdir(path)]
-#         for f in filelist:
-#             os.remove(os.path.join(path, f))
-
