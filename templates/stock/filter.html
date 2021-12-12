@@ -16,15 +16,15 @@
         <form method="get">
             {% csrf_token %}
 
-            {{ form.non_field_errors }}
+            {{ filter.form.non_field_errors }}
 
-            {% for hidden_field in form.hidden_fields %}
+            {% for hidden_field in filter.form.hidden_fields %}
                 {{ hidden_field.errors }}
                 {{ hidden_field }}
             {% endfor %}
 
             <div class="row justify-content-center align-items-center">
-                {% for field in form.visible_fields %}
+                {% for field in filter.form.visible_fields %}
                     <div class="col-auto py-2">
                         <div class="input-group">
                             <div class="input-group-text filter">{{ field.label }}</div>
@@ -42,5 +42,4 @@
             </div>
         </form>
     </div>
-
 </div>

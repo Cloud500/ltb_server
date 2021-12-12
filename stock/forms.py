@@ -17,18 +17,61 @@ class AddBookForm(forms.ModelForm):
     ltb_type = forms.ModelChoiceField(label="Typ",
                                       queryset=LTBType.objects.all(),
                                       empty_label=None)
-    number = forms.CharField(label="Nummer")
+    ltb_number = forms.CharField(label="Nummer")
     ltb_edition = forms.ModelChoiceField(label="Auflage",
                                          queryset=LTBEditionNumber.objects.all(),
                                          empty_label=None)
-    first_edition = forms.ChoiceField(label="Ist Erstausgabe", choices=ON_STOCK_CHOICES)
+    is_first_edition = forms.ChoiceField(label="Erstausgabe", choices=ON_STOCK_CHOICES)
 
     class Meta:
         """
         TODO: Docstring
         """
         model = Quant
-        fields = ('ltb_type', 'number', 'ltb_edition', 'first_edition')
+        fields = ('ltb_type', 'ltb_number', 'ltb_edition', 'is_first_edition')
+
+    def clean_ltb_number(self):
+        """
+        TODO: Docstring
+
+        :return:
+        """
+        try:
+            number = int(self.data['ltb_number'])
+        except ValueError:
+            raise ValidationError(
+                '%(value)s ist keine Zahl',
+                params={'value': self.data['ltb_number']})
+
+        if number <= 0:
+            raise ValidationError('Nummer muss größer als 0 sein.')
+
+        ltb_number = LTBNumber.objects.filter(number=number).first()
+        if ltb_number:
+            self.cleaned_data['ltb_number'] = ltb_number
+            return ltb_number
+        else:
+            raise ValidationError(
+                'Nummer %(value)s ist nicht vorhanden',
+                params={'value': str(number).zfill(3)})
+
+    def clean(self):
+        """
+        TODO: Docstring
+
+        :return:
+        """
+        if self.cleaned_data.get('ltb_edition') and self.cleaned_data.get('ltb_number') and self.cleaned_data.get(
+                'ltb_type'):
+            book = LTB.objects.filter(
+                ltb_edition__ltb_edition_number=self.cleaned_data['ltb_edition'],
+                ltb_edition__ltb_number_set__ltb_number=self.cleaned_data['ltb_number'],
+                ltb_edition__ltb_number_set__ltb_type=self.cleaned_data['ltb_type']).first()
+            if book:
+                self.cleaned_data['book'] = book
+                return self.cleaned_data
+            else:
+                raise ValidationError('Buch existiert nicht')
 
     def save(self, commit=True):
         """
@@ -37,39 +80,9 @@ class AddBookForm(forms.ModelForm):
         :param commit:
         :return:
         """
-        message = {}
-        valid_data = True
-        new_data = dict(self.data)
-
-        ltb_type_id = int(new_data.pop('ltb_type', [0, ])[0])
-        ltb_edition_id = int(new_data.pop('ltb_edition', [0, ])[0])
-
-        first_edition = new_data.pop('first_edition', [False, ])[0]
-
-        number = new_data.pop('number', [0, ])[0]
-        try:
-            number = int(number)
-        except ValueError:
-            valid_data = False
-            message['success'] = False
-            message['message'] = f"Eingabe ungültig"
-            message['number'] = f"{number} ist keine Zahl"
-
-        book = None
-        if valid_data:
-            book = LTB.objects.filter(
-                ltb_edition__ltb_number_set__ltb_type__id=int(ltb_type_id),
-                ltb_edition__ltb_number_set__ltb_number__number=number,
-                ltb_edition__ltb_edition_number__id=int(ltb_edition_id)).first()
-            if not book:
-                message['success'] = False
-                message['message'] = f"Es existiert kein Buch mit den angegebenen Daten"
-
-        if commit and book:
-            quant = Quant(book=book, is_first_edition=first_edition)
+        if commit:
+            quant = Quant(book=self.cleaned_data.get('book'),
+                          is_first_edition=self.cleaned_data.get('is_first_edition'))
             quant.save()
-            message['success'] = True
-            message['message'] = f"\"{book.type}{book.number} - {book.complete_name}\" wurde hinzugefügt"
-        else:
-            message['success'] = False
-        return message
+            return quant
+        return None

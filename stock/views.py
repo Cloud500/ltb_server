@@ -1,5 +1,9 @@
+from django.contrib import messages
 from django.shortcuts import render, get_object_or_404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.views.generic import DetailView
+from django_filters.views import FilterView
+from django.views.generic.edit import FormView
 
 from .forms import AddBookForm
 
@@ -9,71 +13,60 @@ from ltb.models import LTBType
 from .filters import QuantFilter, QuantCompleteFilter
 
 
-def quant_list_type(request, s_type: str):
+class QuantList(FilterView):
     """
     TODO: Docstring
-
-    :param request:
-    :param s_type:
-    :return:
     """
-    paginate_by = request.GET.get('paginate_by', 30) or 30
-    if s_type == "all":
-        quants = Quant.objects.all()
-        filter_qs = QuantCompleteFilter(request.GET, queryset=quants)
-    else:
-        ltb_type = LTBType.objects.filter(code=s_type.upper()).get()
-        quants = Quant.objects.filter(book__ltb_edition__ltb_number_set__ltb_type=ltb_type).all()
-        filter_qs = QuantFilter(request.GET, queryset=quants)
+    model = Quant
+    filterset_class = QuantCompleteFilter
+    template_name = 'stock/list.html'
+    paginate_by = 30
 
-    paginator = Paginator(filter_qs.qs, paginate_by)
-    page = request.GET.get('page')
-    form = filter_qs.form
+    def get_queryset(self):
+        """
+        TODO: Docstring
 
-    try:
-        quants = paginator.page(page)
-    except PageNotAnInteger:
-        quants = paginator.page(1)
-    except EmptyPage:
-        quants = paginator.page(paginator.num_pages)
-
-    return render(request,
-                  'stock/list.html',
-                  {'page': page,
-                   'form': form,
-                   'quants': quants})
-
-
-def add_book(request):
-    """
-    TODO: Docstring
-
-    :param request:
-    :return:
-    """
-    user = request.user
-    if request.method == "POST":
-        form = AddBookForm(data=request.POST)
-        if user and user.has_perm('stock.add_quant_on_site'):
-            if form.is_valid():
-                message = form.save()
-                return render(request,
-                              'stock/add_book.html',
-                              {'message': message,
-                               'form': form})
+        :return:
+        """
+        s_type = self.kwargs.get('s_type')
+        if s_type == "all":
+            queryset = Quant.objects.all()
         else:
-            message = {
-                'success': False,
-                'message': f"Sie sind nicht berechtigt Bücher zum Inventar hinzuzufügen"}
+            ltb_type = LTBType.objects.filter(code=s_type.upper()).get()
+            queryset = Quant.objects.filter(book__ltb_edition__ltb_number_set__ltb_type=ltb_type).all()
+        return queryset
 
-            return render(request,
-                          'stock/add_book.html',
-                          {'message': message,
-                           'form': form})
+    def get_paginate_by(self, queryset):
+        """
+        TODO: Docstring
 
-    else:
-        form = AddBookForm(initial={'first_edition': False})
+        :param queryset:
+        :return:
+        """
+        return self.request.GET.get('paginate_by', self.paginate_by)
 
-    return render(request,
-                  'stock/add_book.html',
-                  {'form': form})
+
+class AddBook(FormView):
+    """
+    TODO: Docstring
+    """
+    template_name = 'stock/add_book.html'
+    form_class = AddBookForm
+    success_url = '/stock/book/add'
+
+    def form_valid(self, form):
+        """
+        TODO: Docstring
+
+        :param form:
+        :return:
+        """
+        if self.request.user and self.request.user.has_perm('stock.add_quant_on_site'):
+            quant = form.save()
+            messages.success(self.request,
+                             f"\"{quant.book.number} {quant.book.type} - {quant.book.complete_name}\" wurde hinzugefügt")
+            result = super().form_valid(form)
+        else:
+            messages.error(self.request, "Keine Berechtigung")
+            result = super().form_valid(form)
+        return result

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
-{% load stock_data %}
+{#{% load stock_data %}#}
 {% load widget_tweaks %}
 {% block title %}LTB List{% endblock %}
 {% block content %}
@@ -14,34 +14,40 @@
 
                     <form method="post">
                         {% csrf_token %}
-                        {{ form.non_field_errors }}
-
-                        {% for hidden_field in form.hidden_fields %}
-                            {{ hidden_field.errors }}
-                            {{ hidden_field }}
-                        {% endfor %}
-                        {% if message %}
+                        {% if form.non_field_errors or messages %}
                             <div class="row justify-content-md-center">
                                 <div class="col col-lg-4 py-2">
-                                    <h5 class="text-center {% if not message.success %}text-danger{% endif %}">
-                                        {{ message.message }}
-                                    </h5>
+                                    {% for message in messages %}
+                                        {% if message.level_tag == 'success' %}
+                                        <h5 class="text-center">
+                                            {{ message }}
+                                        </h5>
+                                        {% endif %}
+                                        {% if message.level_tag == 'error' %}
+                                            <p class="text-danger text-center">{{ message }}</p>
+                                        {% endif %}
+                                    {% endfor %}
+                                    {% if form.non_field_errors %}
+                                        {% for error in form.non_field_errors %}
+                                            <p class="text-danger text-center">{{ error }}</p>
+                                        {% endfor %}
+                                    {% endif %}
                                 </div>
                             </div>
                         {% endif %}
 
                         {% for field in form.visible_fields %}
-                            {% get_dict_value message field.name as data %}
                             <div class="row justify-content-md-center">
                                 <div class="col col-lg-2 py-2">
                                     <div class="input-group">
                                         <div class="input-group-text add">{{ field.label }}</div>
                                         {{ field|add_class:'form-control add' }}
                                     </div>
-                                    {% if data %}
-                                        <p class="text-danger text-center">{{ data }}</p>
+                                    {% if field.errors %}
+                                        {% for error in field.errors %}
+                                            <p class="text-danger text-center">{{ error }}</p>
+                                        {% endfor %}
                                     {% endif %}
-                                    {#                        {{ field.errors }}#}
                                 </div>
                             </div>
                         {% endfor %}
