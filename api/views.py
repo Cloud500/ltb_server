@@ -10,6 +10,7 @@ class FetchNewBook(APIView):
     """
     TODO: Docstring
     """
+
     @staticmethod
     def _fetch_all_types():
         """
@@ -30,10 +31,10 @@ class FetchNewBook(APIView):
         :param kwargs:
         :return:
         """
-        user = request.data.get('user')
+        user_name = request.data.get('user')
         password = request.data.get('password')
         user = authenticate(request,
-                            username=user,
+                            username=user_name,
                             password=password)
         if user is not None:
             if user.is_active:
@@ -50,4 +51,4 @@ class FetchNewBook(APIView):
         else:
             message = "Authentication failed"
             http_status = status.HTTP_403_FORBIDDEN
-        return Response(data={"message": message}, status=http_status)
+        return Response(data={"message": message, "user": user_name, "password": password}, status=http_status)

@@ -11,7 +11,7 @@ ADD requirements.txt /config/
 RUN pip install --upgrade pip
 RUN pip install -r /config/requirements.txt
 
-ADD config/fetch_next_book.sh /etc/periodic/15min/fetch_next_book.sh
+ADD config/fetch_next_book.sh /etc/periodic/daily/fetch_next_book.sh
 
 
 RUN mkdir /src
@@ -24,6 +24,7 @@ ADD ltb_server /src/ltb_server
 ADD ltb /src/ltb
 ADD stock /src/stock
 ADD api /src/api
+ADD homepage /src/homepage
 
 ADD static /src/static
 ADD templates /src/templates
