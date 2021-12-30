@@ -1,5 +1,7 @@
+README.rst
+LICENSE
 Dockerfile
-docker-compose.yml
+docker-compose.*
 *.sqlite3
 /.git
 /.idea

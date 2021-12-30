@@ -1,7 +1,8 @@
 version: '3'
 services:
   nginx:
-    build: ./config/nginx
+    container_name: ltb_server-nginx
+    image: ltb_server-nginx:latest
     ports:
       - "80:80"
     volumes:
@@ -11,7 +12,8 @@ services:
       - web
 
   web:
-    build: .
+    container_name: ltb_server-core
+    image: ltb_server-core:latest
     volumes:
       - static_volume:/src/static
       - media_volume:/src/media
@@ -21,6 +23,7 @@ services:
       - db
 
   db:
+    container_name: ltb_server-database
     image: postgres:13.0-alpine
     ports:
       - "5432:5432"
