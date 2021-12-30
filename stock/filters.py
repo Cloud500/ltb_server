@@ -19,10 +19,9 @@ class QuantFilter(django_filters.FilterSet):
 
     complete_name = django_filters.CharFilter(label='Name',
                                               lookup_expr='icontains')
-    number = django_filters.ModelChoiceFilter(label='Nummer',
-                                              queryset=LTBNumber.objects.all(),
-                                              method='filter_data',
-                                              empty_label="Alle")
+    number = django_filters.NumberFilter(label='Nummer',
+                                         method='filter_data')
+
     edition = django_filters.ModelChoiceFilter(label='Auflage',
                                                queryset=LTBEditionNumber.objects.all(),
                                                method='filter_data',
@@ -54,43 +53,11 @@ class QuantFilter(django_filters.FilterSet):
         :return:
         """
         if name == 'number':
-            queryset = queryset.filter(book__ltb_edition__ltb_number_set__ltb_number=value)
+            queryset = queryset.filter(book__ltb_edition__ltb_number_set__ltb_number__number=value)
         if name == 'edition':
             queryset = queryset.filter(book__ltb_edition__ltb_edition_number=value)
         if name == 'first_edition':
             queryset = queryset.filter(is_first_edition=value)
         if name == 'read':
             queryset = queryset.filter(book__is_read=value)
-        return queryset
-
-
-class QuantCompleteFilter(QuantFilter):
-    """
-    TODO: Docstring
-    """
-    type = django_filters.ModelChoiceFilter(label='Typ',
-                                            queryset=LTBType.objects.all(),
-                                            method='filter_data',
-                                            empty_label="Alle")
-
-    class Meta:
-        """
-        TODO: Docstring
-        """
-        model = Quant
-        fields = ['complete_name', 'number', 'edition', 'first_edition', 'read', 'type']
-
-    @staticmethod
-    def filter_data(queryset, name, value):
-        """
-        TODO: Docstring
-
-        :param queryset:
-        :param name:
-        :param value:
-        :return:
-        """
-        queryset = QuantFilter.filter_data(queryset, name, value)
-        if name == 'type':
-            queryset = queryset.filter(book__ltb_edition__ltb_number_set__ltb_type=value)
         return queryset

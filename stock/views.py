@@ -1,16 +1,17 @@
 from django.contrib import messages
 from django.shortcuts import render, get_object_or_404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.urls import reverse
 from django.views.generic import DetailView
 from django_filters.views import FilterView
 from django.views.generic.edit import FormView
 
-from .forms import AddBookForm
+from .forms import AddBookForm, FindNumberForm
 
 from .models import Quant
 from ltb.models import LTBType
 
-from .filters import QuantFilter, QuantCompleteFilter
+from .filters import QuantFilter
 
 
 class QuantList(FilterView):
@@ -18,7 +19,7 @@ class QuantList(FilterView):
     TODO: Docstring
     """
     model = Quant
-    filterset_class = QuantCompleteFilter
+    filterset_class = QuantFilter
     template_name = 'stock/list.html'
     paginate_by = 30
 
@@ -70,3 +71,42 @@ class AddBook(FormView):
             messages.error(self.request, "Keine Berechtigung")
             result = super().form_valid(form)
         return result
+
+
+class FindNumber(FormView):
+    """
+    TODO: Docstring
+    """
+    template_name = 'stock/find_number.html'
+    form_class = FindNumberForm
+    success_url = '/stock/'
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.ltb_type = "all"
+        self.ltb_number = ""
+
+    def form_valid(self, form):
+        """
+        TODO: Docstring
+
+        :param form:
+        :return:
+        """
+
+        self.ltb_type = form.cleaned_data['ltb_type']
+        self.ltb_number = form.cleaned_data['ltb_number']
+
+        result = super().form_valid(form)
+        return result
+
+    def get_success_url(self):
+        """
+        TODO: Docstring
+
+        :return:
+        """
+        url = super(FindNumber, self).get_success_url()
+        url += f"{self.ltb_type}"
+        url += f"?number={self.ltb_number}"
+        return url

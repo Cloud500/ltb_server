@@ -3,36 +3,28 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 EXPOSE 8000
 
-RUN apk update \
-  && apk add postgresql-dev gcc python3-dev musl-dev jpeg-dev zlib-dev libjpeg curl
+RUN mkdir /src \
+  && mkdir /src/media \
+  && mkdir /src/media/cover
 
-RUN mkdir /config
-ADD requirements.txt /config/
-RUN pip install --upgrade pip
-RUN pip install -r /config/requirements.txt
+COPY . /src/
 
-ADD config/fetch_next_book.sh /etc/periodic/daily/fetch_next_book.sh
-
-
-RUN mkdir /src
-
-COPY config/entrypoint.sh /src/
-RUN chmod +x /src/entrypoint.sh
-
-ADD manage.py /src/
-ADD ltb_server /src/ltb_server
-ADD ltb /src/ltb
-ADD stock /src/stock
-ADD api /src/api
-ADD homepage /src/homepage
-
-ADD static /src/static
-ADD templates /src/templates
-RUN mkdir /src/media
-RUN mkdir /src/media/cover
+RUN apk add --no-cache \
+    libpq-dev \
+    jpeg-dev \
+    zlib-dev \
+    libjpeg \
+    curl \
+  && apk add --no-cache --virtual .build-deps \
+    python3-dev \
+    gcc \
+    musl-dev \
+  && chmod +x /src/config/entrypoint.sh \
+  && pip install --upgrade pip \
+  && pip install --no-cache-dir -r /src/requirements.txt \
+  && apk del .build-deps \
+  && mv /src/config/fetch_next_book.sh /etc/periodic/daily/fetch_next_book.sh
 
 WORKDIR /src
-#CMD ["manage.py", "runserver", "0.0.0.0:8000"]
-#ENTRYPOINT ["python"]
-ENTRYPOINT ["/src/entrypoint.sh"]
+ENTRYPOINT ["/src/config/entrypoint.sh"]
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]

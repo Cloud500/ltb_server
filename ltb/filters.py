@@ -18,10 +18,9 @@ class LTBFilter(django_filters.FilterSet):
 
     complete_name = django_filters.CharFilter(label='Name',
                                               lookup_expr='icontains')
-    number = django_filters.ModelChoiceFilter(label='Nummer',
-                                              queryset=LTBNumber.objects.all(),
-                                              method='filter_data',
-                                              empty_label="Alle")
+    number = django_filters.NumberFilter(label='Nummer',
+                                         method='filter_data')
+
     edition = django_filters.ModelChoiceFilter(label='Auflage',
                                                queryset=LTBEditionNumber.objects.all(),
                                                method='filter_data',
@@ -60,41 +59,9 @@ class LTBFilter(django_filters.FilterSet):
                 id_list = list(LTB.not_in_stock.values_list('id', flat=True))
                 queryset = queryset.filter(id__in=id_list)
         if name == 'number':
-            queryset = queryset.filter(ltb_edition__ltb_number_set__ltb_number=value)
+            queryset = queryset.filter(ltb_edition__ltb_number_set__ltb_number__number=value)
         if name == 'edition':
             queryset = queryset.filter(ltb_edition__ltb_edition_number=value)
         if name == 'read':
             queryset = queryset.filter(is_read=value)
-        return queryset
-
-
-class LTBCompleteFilter(LTBFilter):
-    """
-    TODO: Docstring
-    """
-    type = django_filters.ModelChoiceFilter(label='Typ',
-                                            queryset=LTBType.objects.all(),
-                                            method='filter_data',
-                                            empty_label="Alle")
-
-    class Meta:
-        """
-        TODO: Docstring
-        """
-        model = LTB
-        fields = ['complete_name', 'number', 'edition', 'type', 'read', 'on_stock']
-
-    @staticmethod
-    def filter_data(queryset, name, value):
-        """
-        TODO: Docstring
-
-        :param queryset:
-        :param name:
-        :param value:
-        :return:
-        """
-        queryset = LTBFilter.filter_data(queryset, name, value)
-        if name == 'type':
-            queryset = queryset.filter(ltb_edition__ltb_number_set__ltb_type=value)
         return queryset

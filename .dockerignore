@@ -1,0 +1,14 @@
+Dockerfile
+docker-compose.yml
+*.sqlite3
+/.git
+/.idea
+.dockerignore
+.gitignore
+.env
+.env.example
+/venv
+/media
+/config/nginx
+/__pycache__
+/*/__pycache__

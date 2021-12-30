@@ -86,3 +86,19 @@ class AddBookForm(forms.ModelForm):
             quant.save()
             return quant
         return None
+
+
+class FindNumberForm(forms.Form):
+    """
+    TODO: Docstring
+    """
+    ltb_type = forms.ModelChoiceField(label="Typ",
+                                      queryset=LTBType.objects.all(),
+                                      empty_label=None)
+    ltb_number = forms.CharField(label="Nummer")
+
+    class Meta:
+        """
+        TODO: Docstring
+        """
+        fields = ('ltb_type', 'ltb_number',)

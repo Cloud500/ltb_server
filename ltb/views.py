@@ -5,7 +5,7 @@ from django.views.generic import DetailView
 from django_filters.views import FilterView
 
 from .models import LTB, LTBType
-from .filters import LTBFilter, LTBCompleteFilter
+from .filters import LTBFilter
 
 
 class LTBList(FilterView):
@@ -13,7 +13,7 @@ class LTBList(FilterView):
     TODO: Docstring
     """
     model = LTB
-    filterset_class = LTBCompleteFilter
+    filterset_class = LTBFilter
     template_name = 'ltb/list.html'
     paginate_by = 30
 
