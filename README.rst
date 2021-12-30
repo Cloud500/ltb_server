@@ -21,7 +21,7 @@ LTB (Lustiges Taschenbuch) Server für die Übersicht und Verwaltung der Existie
 
 Features:
 
-* Übersischt aller existierenden Bücher (ink. Ausgaben/Sonderausgaben)
+* Übersicht aller existierenden Bücher (ink. Ausgaben/Sonderausgaben)
 * Übersicht der Bücher im Besitz
 * Unterscheidung zwischen Original und Nachdruck
 * Gelesen/Ungelesen Status
@@ -191,17 +191,23 @@ Roadmap
 ~~~~~~~
 
 * Multiuser
-* Unterschieldiche "Lagerorte"
+* Unterschiedliche "Lagerorte"
 * API ausbauen
 
 
 Changelog
 =========
 
-1.0.0
-~~~~~~~~~~
+0.1.1
+~~~~~
 
-* Release
+* Bugfix: Github Actions
+
+0.1.0
+~~~~~
+
+* Erster Release
+* Testen der Github Actions
 
 Author
 ======
