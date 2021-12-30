@@ -14,6 +14,8 @@ class Quant(models.Model):
         """
         TODO: Docstring
         """
+        verbose_name = 'Buch'
+        verbose_name_plural = 'Bücher'
         ordering = ['book', 'is_first_edition']
         permissions = [
             ('add_quant_on_site', "Can add Quants on the Site"),

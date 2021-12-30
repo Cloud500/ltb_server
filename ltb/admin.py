@@ -95,7 +95,6 @@ class LTBEditionNumberAdmin(admin.ModelAdmin):
     """
     form = LTBEditionNumberForm
 
-    list_display = ('number',)
     search_fields = ('number',)
     ordering = ('number',)
 

@@ -22,6 +22,8 @@ class LTBType(models.Model):
         """
         TODO: Docstring
         """
+        verbose_name = 'Typ'
+        verbose_name_plural = 'Typen'
         ordering = ['code']
         permissions = [
             ('fetch_new_books', "Can fetch new books"),
@@ -148,6 +150,8 @@ class LTBNumber(models.Model):
         """
         TODO: Docstring
         """
+        verbose_name = 'Nummer'
+        verbose_name_plural = 'Nummern'
         ordering = ['number']
 
     def filled_number(self):
@@ -224,6 +228,8 @@ class LTBNumberSet(models.Model):
         """
         TODO: Docstring
         """
+        verbose_name = 'Nummer set'
+        verbose_name_plural = 'Nummer sets'
         ordering = ['ltb_number']
         unique_together = ('ltb_type', 'ltb_number',)
 
@@ -327,6 +333,8 @@ class LTBEditionNumber(models.Model):
         """
         TODO: Docstring
         """
+        verbose_name = 'Auflage'
+        verbose_name_plural = 'Auflagen'
         ordering = ['number', ]
 
     def __str__(self):
@@ -375,6 +383,8 @@ class LTBEdition(models.Model):
         """
         TODO: Docstring
         """
+        verbose_name = 'Buchversion'
+        verbose_name_plural = 'Buchversionen'
         unique_together = ('ltb_number_set', 'ltb_edition_number')
         ordering = ['ltb_number_set', 'ltb_edition_number']
 
@@ -476,6 +486,8 @@ class LTB(models.Model):
         """
         TODO: Docstring
         """
+        verbose_name = 'Buch'
+        verbose_name_plural = 'Bücher'
         unique_together = ('ltb_edition', 'sort')
         ordering = ['ltb_edition__ltb_number_set__ltb_type', 'ltb_edition__ltb_number_set__ltb_number',
                     'ltb_edition__ltb_edition_number', 'sort']
