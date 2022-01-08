@@ -7,8 +7,8 @@ LTB Server
 .. |license| image:: https://img.shields.io/badge/licence-LGPL--3-lightgray.png
     :target: https://www.gnu.org/licenses/agpl-3.0-standalone.html
     :alt: License: AGPL-3
-.. |docker| image:: https://img.shields.io/docker/pulls/_/ubuntu
-    :target: https://hub.docker.com/_/ubuntu
+.. |docker| image:: https://img.shields.io/docker/pulls/cloud500/ltb_server-core
+    :target: https://hub.docker.com/r/cloud500/ltb_server-core
     :alt: Docker Pulls
 
 |docker| |license| |stage|
@@ -197,6 +197,11 @@ Roadmap
 
 Changelog
 =========
+
+0.2.0
+~~~~~
+
+* Möglichkeit ein Buch aus der Detailansicht in den Bestand aufzunehmen
 
 0.1.1
 ~~~~~
