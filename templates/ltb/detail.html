@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load widget_tweaks %}
 {% block title %}{{ ltb.number }} {{ ltb.complete_name }}{% endblock %}
 {% block content %}
     <div class="container-fluid pb-5">
@@ -149,7 +150,7 @@
                                     </div>
                                 </div>
                             </li>
-                            <li class="list-group-item detail bottom">
+                            <li class="list-group-item detail">
                                 <div class="me-auto">
                                     <div class="detail_header">
                                         Seitenanzahl
@@ -159,6 +160,32 @@
                                     </div>
                                 </div>
                             </li>
+                            {% if perms.stock.add_quant_on_site %}
+                                <li class="list-group-item detail bottom">
+                                    <div class="me-auto">
+                                        <div class="detail_header">
+                                            Aufnehmen
+                                        </div>
+                                        <div class="detail_content">
+                                            <form method="post">
+                                                {% csrf_token %}
+                                                <div class="input-group bg-yellow rounded">
+                                                    <div class="input-group-text add">Erstausgabe</div>
+                                                    <input type="hidden" name="add_book" value="1"/>
+                                                    {% for field in add_book_form.visible_fields %}
+                                                        {{ field|add_class:'form-control add' }}
+                                                    {% endfor %}
+                                                    <button class="btn add btn-outline-secondary"
+                                                            type="submit"
+                                                            id="button-submit">
+                                                        Hinzufügen
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </li>
+                            {% endif %}
                         </ol>
                     </div>
                 </div>
