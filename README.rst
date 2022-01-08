@@ -198,6 +198,11 @@ Roadmap
 Changelog
 =========
 
+0.2.0
+~~~~~
+
+* Möglichkeit ein Buch aus der Detailansicht in den Bestand aufzunehmen
+
 0.1.1
 ~~~~~
 
