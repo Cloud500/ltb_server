@@ -15,7 +15,7 @@ class AddBookForm(forms.Form):
         (False, 'Nein'),
         (True, 'Ja')
     }
-    first_edition = forms.ChoiceField(label="Erstausgabe", choices=ON_STOCK_CHOICES)
+    first_edition = forms.ChoiceField(label="Erstausgabe", choices=ON_STOCK_CHOICES, initial=True)
     slug = forms.CharField(widget=forms.HiddenInput())
 
     def clean(self) -> dict:
