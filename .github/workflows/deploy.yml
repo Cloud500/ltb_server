@@ -1,0 +1,121 @@
+name: Deployment
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  tag:
+    name: Create Tag and Changelog
+    runs-on: ubuntu-latest
+    outputs:
+      release_skipped: ${{ steps.versionBump.outputs.skipped }}
+      version_tag: ${{ steps.versionBump.outputs.tag }}
+      changelog: ${{ steps.versionBump.outputs.clean_changelog }}
+
+    steps:
+      - id: checkout
+        name: Checkout Git repo
+        uses: actions/checkout@master
+
+      - id: versionBump
+        name: Automated Version Bump
+        uses: TriPSs/conventional-changelog-action@v3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          release-count: 0
+          tag-prefix: "v"
+          version-file: '.github/version.json'
+
+  release:
+    name: Create a Release
+    runs-on: ubuntu-latest
+    needs: tag
+    if: needs.tag.outputs.release_skipped == 'false'
+
+    steps:
+      - id: checkout
+        name: Checkout Git repo
+        uses: actions/checkout@master
+
+      - id: release
+        name: Automated GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ needs.tag.outputs.version_tag }}
+          release_name: ${{ needs.tag.outputs.version_tag }}
+          body: ${{ needs.tag.outputs.changelog }}
+
+  docker_build_core:
+    name: Create the core Image
+    runs-on: ubuntu-latest
+    needs: tag
+    if: needs.tag.outputs.release_skipped == 'false'
+
+    steps:
+      - id: checkout
+        name: Checkout Git repo
+        uses: actions/checkout@master
+
+      - id: docker_login
+        name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+      - id: docker_setup
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - id: docker_build
+        name: Build
+        uses: docker/build-push-action@v2
+        with:
+          context: ./
+          file: ./Dockerfile
+          builder: ${{ steps.docker_setup.outputs.name }}
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_HUB_USERNAME }}/ltb_server-core:latest
+            ${{ secrets.DOCKER_HUB_USERNAME }}/ltb_server-core:${{ needs.tag.outputs.version_tag }}
+          cache-from: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/ltb_server-core:buildcache
+          cache-to: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/ltb_server-core:buildcache,mode=max
+
+  docker_build_nginx:
+    name: Create the nginx Image
+    runs-on: ubuntu-latest
+    needs: tag
+    if: needs.tag.outputs.release_skipped == 'false'
+
+    steps:
+      - id: checkout
+        name: Checkout Git repo
+        uses: actions/checkout@master
+
+      - id: docker_login
+        name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+      - id: docker_setup
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - id: docker_build
+        name: Build
+        uses: docker/build-push-action@v2
+        with:
+          context: ./config/nginx/
+          file: ./config/nginx/Dockerfile
+          builder: ${{ steps.docker_setup.outputs.name }}
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_HUB_USERNAME }}/ltb_server-nginx:latest
+            ${{ secrets.DOCKER_HUB_USERNAME }}/ltb_server-nginx:${{ needs.tag.outputs.version_tag }}
+          cache-from: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/ltb_server-nginx:buildcache
+          cache-to: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/ltb_server-nginx:buildcache,mode=max
