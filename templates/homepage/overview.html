@@ -1,4 +1,5 @@
 {% load static %}
+{% load ltb_books %}
 {% block content %}
     <div class="col d-flex align-items-stretch pb-3">
         <div class="card index h-100" style="border:none;width:100%;height:100%;">
@@ -27,8 +28,12 @@
                                     <li class="list-group-item overview d-flex justify-content-between align-items-start">
                                         <div class=" me-auto">
                                             <div class="fw-bold">Fehlende Nummern:</div>
+                                            {% last_stock_number type.code as last_number %}
                                             {% for number in type.missing_numbers %}
-                                                {{ number }}
+                                                {% compare_string_number number last_number as smaller_check %}
+                                                <span class="{% if smaller_check %}missing_gap{% endif %}">
+                                                    {{ number }}
+                                                </span>
                                             {% endfor %}
                                         </div>
                                     </li>

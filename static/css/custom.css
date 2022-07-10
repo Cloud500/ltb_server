@@ -108,6 +108,7 @@
     --overview_radius: 0.50rem;
     --overview_border: solid;
     --overview_border_color: var(--black);
+    --missing_gap_color: var(--red);
 
     --inventory_font_color: var(--white);
     --inventory_color: var(--dark_blue);
@@ -550,4 +551,8 @@ input::-webkit-inner-spin-button {
 input[type=number] {
     appearance: none;
     -moz-appearance: textfield;
+}
+
+.missing_gap {
+    color: var(--missing_gap_color);
 }
