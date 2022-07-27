@@ -2,7 +2,7 @@ from datetime import timedelta, timezone, datetime
 
 from django.contrib import admin
 from .admin_forms import LTBTypeForm, LTBNumberForm, LTBNumberSetForm, LTBEditionNumberForm, LTBEditionForm, LTBForm
-from .models import LTBType, LTBNumber, LTBNumberSet, LTBEditionNumber, LTBEdition, LTB
+from .models import LTBType, LTBNumber, LTBNumberSet, LTBEditionNumber, LTBEdition, LTB, LTBEditionStory
 
 
 @admin.action(description='Fetch next number')
@@ -99,6 +99,16 @@ class LTBEditionNumberAdmin(admin.ModelAdmin):
     ordering = ('number',)
 
 
+@admin.action(description='Fetch Stories for this Book')
+def create_stories(modeladmin, request, queryset):
+    """
+    TODO: Docstring
+    """
+    edition: LTBEdition
+    for edition in queryset:
+        edition.fetch_stories()
+
+
 @admin.register(LTBEdition)
 class LTBEditionAdmin(admin.ModelAdmin):
     """
@@ -110,6 +120,7 @@ class LTBEditionAdmin(admin.ModelAdmin):
     search_fields = ('ltb_number_set__ltb_number__number', 'ltb_edition_number__number', 'title')
     list_filter = ('ltb_edition_number', 'ltb_number_set__ltb_type')
     ordering = ('ltb_number_set', 'ltb_edition_number')
+    actions = [create_stories, ]
 
 
 @admin.register(LTB)
@@ -122,3 +133,13 @@ class LTBAdmin(admin.ModelAdmin):
     list_display = ('ltb_edition', 'name', 'sort', 'is_read')
     search_fields = ('ltb_edition', 'name',)
     ordering = ('ltb_edition', 'sort')
+
+
+@admin.register(LTBEditionStory)
+class LTBEditionStoryAdmin(admin.ModelAdmin):
+    """
+    TODO: Docstring
+    """
+
+    list_display = ('ltb_edition', 'story', 'page')
+    search_fields = ('ltb_edition__title', 'story__title',)

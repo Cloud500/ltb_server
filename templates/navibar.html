@@ -27,8 +27,30 @@
                 {% show_all_types "stock" %}
             </li>
             <li class="nav-item">
-                    <a class="nav-link" href="/stock/book/find">Suche in Besitz</a>
-                </li>
+                <a class="nav-link" href="/story">Geschichten</a>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                   data-bs-toggle="dropdown"
+                   aria-expanded="false">
+                    Personen
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <li>
+                        <a class="dropdown-item" href="/person/real/">
+                            Reelle Personen
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="/person/fictional/">
+                            Bewohner aus Entenhausen
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/stock/book/find">Suche in Besitz</a>
+            </li>
             {% if perms.stock.add_quant_on_site %}
                 <li class="nav-item">
                     <a class="nav-link" href="/stock/book/add">Buch hinzufügen</a>

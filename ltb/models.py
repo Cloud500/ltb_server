@@ -3,7 +3,10 @@ from django.db import models
 from django.utils.text import slugify
 from django.db import connection
 
+from story.scraper import StoryScraper, Story as s_Story, Person as s_Person
 from .scraper import LTBScraper
+
+from story.models import Story
 
 
 class LTBType(models.Model):
@@ -313,6 +316,7 @@ class LTBNumberSet(models.Model):
                     release_date=book_data['release_date']
                 )
                 edition.save()
+                edition.fetch_stories()
                 special_edition = LTB(
                     ltb_edition=edition,
                     sort=1,
@@ -421,6 +425,44 @@ class LTBEdition(models.Model):
         if not self.id or self.slug != slugify(self.create_slug()):
             self.slug = slugify(self.create_slug())
         super().save(*args, **kwargs)
+
+    def get_or_create_story(self, story_data: s_Story):
+        edition_story = self.LTBEditionStory.filter(story__code=story_data.code).first()
+        # edition_story = LTBEditionStory.objects.filter(ltb_edition__id=self.id, story__code=story_data.code).first()
+
+        if not edition_story:
+            story = Story.objects.filter(code=story_data.code).first()
+
+            if not story:
+                story = Story(code=story_data.code, url=self.url)
+                story.save()
+                story.fetch_data()
+
+            edition_story = LTBEditionStory(ltb_edition=self, story=story, page=story_data.page)
+            edition_story.save()
+        return edition_story
+
+    def fetch_stories(self):
+        if self.url:
+            data = StoryScraper(self.url).get_story_data()
+            story: s_Story
+            for story in data:
+                self.get_or_create_story(story)
+
+
+class LTBEditionStory(models.Model):
+    ltb_edition = models.ForeignKey(LTBEdition, related_name='LTBEditionStory', on_delete=models.CASCADE)
+    story = models.ForeignKey(Story, related_name='LTBEditionStory', on_delete=models.CASCADE)
+    page = models.PositiveIntegerField("Stories", null=True, blank=True)
+
+    class Meta:
+        """
+        TODO: Docstring
+        """
+        verbose_name = 'Book, Story real'
+        verbose_name_plural = 'Books, Story real'
+        unique_together = ('ltb_edition', 'story')
+        ordering = ['page']
 
 
 class InStockManager(models.Manager):

@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     'ltb.apps.LtbConfig',
     'stock.apps.StockConfig',
     'api.apps.ApiConfig',
+    'person.apps.PersonConfig',
+    'story.apps.StoryConfig',
 ]
 
 MIDDLEWARE = [

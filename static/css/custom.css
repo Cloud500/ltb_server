@@ -115,7 +115,15 @@
     --inventory_first_font_color: var(--white);
     --inventory_first_color: var(--green);
 
+    --page_font_color: var(--white);
+    --page_color: var(--yellow);
+
     --ribbon_color: rgba(183, 15, 22, 0.9);
+
+    --link_color: var(--white);
+    --link_visited_color: var(--white);
+    --link_hover_color: var(--yellow);
+    --link_active_color: var(--yellow);
 }
 
 body {
@@ -139,6 +147,20 @@ div.footer {
     right: 0;
     bottom: 0;
     left: 0;
+    z-index: 1030;
+}
+
+div.button_footer {
+    text-align: center;
+    font-size: 12px;
+    font-weight: lighter;
+    color: var(--footer_font_color);
+    /*background-color: var(--footer_background_color);*/
+    position: fixed;
+    right: 0;
+    /*bottom: 80%;*/
+    top: 0px;
+    /*left: 0;*/
     z-index: 1030;
 }
 
@@ -363,6 +385,14 @@ div.footer {
     border-top-right-radius: var(--book_radius);
 }
 
+.card-img-top.person {
+    border-top-left-radius: var(--book_radius);
+    border-top-right-radius: var(--book_radius);
+    max-width: 150px;
+    max-height: 225px;
+}
+
+
 .card-body.book {
     background-color: var(--book_background_color);
     border-top: 2px var(--book_border) var(--book_border_color);
@@ -374,6 +404,13 @@ div.footer {
     color: var(--book_number_font_color);
     text-align: center;
     margin-bottom: 0.5rem;
+}
+
+.person-name {
+    color: var(--book_number_font_color);
+    text-align: center;
+    /*margin-bottom: 0.5rem;*/
+    font-size: 14px;
 }
 
 .card-text.edition {
@@ -401,6 +438,24 @@ span.inventory {
     background-color: var(--inventory_color);
 }
 
+span.page {
+    position: absolute !important;
+    top: 0 !important;
+    left: 100% !important;
+    transform: translate(-50%, -50%) !important;
+    display: inline-block;
+    padding: 0.35em 0.65em;
+    font-size: 0.75em;
+    font-weight: 700;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: 50rem !important;
+    color: var(--page_font_color);
+    background-color: var(--page_color);
+}
+
 span.inventory.first_edition {
     color: var(--inventory_first_font_color);
     background-color: var(--inventory_first_color);
@@ -421,6 +476,17 @@ span.inventory.first_edition {
     border-top: 2px solid var(--detail_border_color);
     border-left: 2px solid var(--detail_border_color);
     border-right: 2px solid var(--detail_border_color);
+}
+
+.list-group-item.detail-person {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: flex-start !important;
+    background-color: var(--detail_background_color) !important;
+    border-top: 0px solid var(--detail_border_color);
+    border-left: 0px solid var(--detail_border_color);
+    border-right: 0px solid var(--detail_border_color);
+    border-bottom: 0px solid var(--detail_border_color);
 }
 
 .list-group-item.detail.top {
@@ -444,6 +510,7 @@ div.detail_header {
     color: var(--detail_font_color);
     font-weight: 700;
 }
+
 div.detail_content {
     color: var(--detail_font_color);
     margin-right: auto;
@@ -489,7 +556,6 @@ div.detail_content {
     color: var(--add_form_control_font_color);
     background-color: var(--add_form_control_color);
 }
-
 
 
 /* || Ribbon*/
@@ -555,4 +621,28 @@ input[type=number] {
 
 .missing_gap {
     color: var(--missing_gap_color);
+}
+
+a:link {
+  color: var(--link_color);
+  background-color: transparent;
+  text-decoration: none;
+}
+
+a:visited {
+  color: var(--link_visited_color);
+  background-color: transparent;
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--link_hover_color);
+  background-color: transparent;
+  text-decoration: underline;
+}
+
+a:active {
+  color: var(--link_active_color);
+  background-color: transparent;
+  text-decoration: underline;
 }

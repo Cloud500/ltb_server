@@ -1,0 +1,46 @@
+{% load static %}
+
+<ol class="list-group pb-3">
+    <li class="list-group-item detail top bottom">
+        <span class="page">
+        {{ edition_story.page }}
+    </span>
+        <div class="me-auto">
+            Titel: {{ edition_story.story.title }}
+            <br/>
+            Genre: {{ edition_story.story.get_genres }}
+            <br/>
+            Code: {{ edition_story.story.code }}
+            <br/>
+            {#            Originaltitel: {{ edition_story.story.original_title }}#}
+            {#            <br/>#}
+            {#            Ursprung: {{ edition_story.story.origin }}#}
+            {#            <br/>#}
+            Charaktere:
+                {% for character in edition_story.story.characters.all %}
+                    <a style="z-index:2;position: relative;" href="{{ character.get_fictional_absolute_url }}">
+                        {{ character.name }}<!--
+                --></a><!-- Tweak the space between the new line
+                -->{% if not forloop.last %},{% endif %}
+
+                {% endfor %}
+            {#            <br/>#}
+            {#            Story:#}
+            {#            <a href="{{ edition_story.story.author.get_real_absolute_url }}">#}
+            {#                {{ edition_story.story.author.name }}#}
+            {#            </a>#}
+            {#            <br/>#}
+            {#            Zeichnungen:#}
+            {#            <a href="{{ edition_story.story.illustrator.get_real_absolute_url }}">#}
+            {#                {{ edition_story.story.illustrator.name }}#}
+            {#            </a>#}
+            {#            <br/>#}
+            {#            Erstveröffentlichung: {{ edition_story.story.date|date:"d.m.Y" }}#}
+
+            <a href="{{ edition_story.story.get_absolute_url }}" class="stretched-link"></a>
+        </div>
+    </li>
+</ol>
+
+
+
