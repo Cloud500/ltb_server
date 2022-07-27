@@ -1,0 +1,15 @@
+{% load static %}
+<div class="card book h-100 text-dark" style="border:none;max-width:200px;min-width:200px;max-height:150px;min-height: 150px;">
+    <div class="card-body">
+        <p class="person-name">
+            {{ story.title }}
+        </p>
+        <p class="card-text edition">
+            {{ story.get_genres }}
+            <br/>
+            <br/>
+            {{ story.code }}
+        </p>
+        <a href="{{ story.get_absolute_url }}" class="stretched-link"></a>
+    </div>
+</div>

@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+{% load static %}
+{% load widget_tweaks %}
+{% block title %}{{ story.title }} {{ story.code }}{% endblock %}
+{% block content %}
+    <div class="container-fluid py-5">
+        <div class="card detail" style="max-width: 100%;">
+            <div class="row g-0 p-3">
+                <div class="col">
+                    <div class="card-body">
+                        {% if ltb.is_read %}
+                            <div class="ribbon ribbon-top-right"><span></span></div>
+                        {% endif %}
+                        <ol class="list-group">
+                            <li class="list-group-item detail top">
+                                <div class="me-auto">
+                                    <div class="detail_header">
+                                        Titel
+                                    </div>
+                                    <div class="detail_content">
+                                        {{ story.title }}
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="list-group-item detail">
+                                <div class="me-auto">
+                                    <div class="detail_header">
+                                        Genre
+                                    </div>
+                                    <div class="detail_content">
+                                        {{ story.get_genres }}
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="list-group-item detail">
+                                <div class="me-auto">
+                                    <div class="detail_header">
+                                        Autor
+                                    </div>
+                                    <div class="detail_content">
+                                        <a href="{{ story.author.get_real_absolute_url }}">
+                                            {{ story.author.name }}
+                                        </a>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="list-group-item detail">
+                                <div class="me-auto">
+                                    <div class="detail_header">
+                                        Zeichner
+                                    </div>
+                                    <div class="detail_content">
+                                        <a href="{{ story.illustrator.get_real_absolute_url }}">
+                                            {{ story.illustrator.name }}
+                                        </a>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="list-group-item detail">
+                                <div class="me-auto">
+                                    <div class="detail_header">
+                                        Charaktere
+                                    </div>
+                                    <div class="detail_content">
+                                        {% for character in story.characters.all %}
+                                            <a style="z-index:2;position: relative;"
+                                               href="{{ character.get_fictional_absolute_url }}">
+                                                {{ character.name }}<!--
+                                        --></a><!-- Tweak the space between the new line
+                                        -->{% if not forloop.last %},{% endif %}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="list-group-item detail">
+                                <div class="me-auto">
+                                    <div class="detail_header">
+                                        Originaltitel
+                                    </div>
+                                    <div class="detail_content">
+                                        {{ story.original_title }}
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="list-group-item detail">
+                                <div class="me-auto">
+                                    <div class="detail_header">
+                                        Erstveröffentlichung
+                                    </div>
+                                    <div class="detail_content">
+                                        {{ story.date|date:"d.m.Y" }}
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="list-group-item detail">
+                                <div class="me-auto">
+                                    <div class="detail_header">
+                                        Ursprung
+                                    </div>
+                                    <div class="detail_content">
+                                        {{ story.origin }}
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="list-group-item detail">
+                                <div class="me-auto">
+                                    <div class="detail_header">
+                                        Seitenanzahl
+                                    </div>
+                                    <div class="detail_content">
+                                        {{ story.pages }}
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="list-group-item detail">
+                                <div class="me-auto">
+                                    <div class="detail_header">
+                                        Code
+                                    </div>
+                                    <div class="detail_content">
+                                        {{ story.code }}
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="list-group-item detail bottom">
+                                <div class="me-auto">
+                                    <div class="detail_header">
+                                        Bücher
+                                    </div>
+                                    <div class="detail_content">
+                                        {% for story_edition in story.LTBEditionStory.all %}
+                                            {% for ltb in story_edition.ltb_edition.ltbs.all %}
+                                                <div style="z-index:2;position:relative;">
+                                                    <a href="{{ ltb.get_absolute_url }}">
+                                                        {{ ltb.ltb_edition.ltb_number_set.ltb_type.code }}
+                                                        {{ ltb.number }}
+                                                        -
+                                                        {{ ltb.complete_name }}
+                                                        ({{ ltb.edition }})
+                                                    </a>
+                                                </div>
+                                            {% endfor %}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

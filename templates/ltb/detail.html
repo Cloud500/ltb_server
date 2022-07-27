@@ -161,7 +161,7 @@
                                 </div>
                             </li>
                             {% if perms.stock.add_quant_on_site %}
-                                <li class="list-group-item detail bottom">
+                                <li class="list-group-item detail">
                                     <div class="me-auto">
                                         <div class="detail_header">
                                             Aufnehmen
@@ -186,6 +186,27 @@
                                     </div>
                                 </li>
                             {% endif %}
+                            <li class="list-group-item detail bottom">
+                                <div class="me-auto">
+                                    <div class="detail_header">
+                                        Geschichten
+                                    </div>
+                                    <a class="stretched-link"
+                                       data-bs-toggle="collapse"
+                                       href="#collapse_test"
+                                       aria-expanded="false"
+                                       aria-controls="collapse_test"></a>
+
+                                    <div class="collapse multi-collapse" id="collapse_test">
+                                        <div class="detail_content">
+                                            {% for edition_story in ltb.ltb_edition.LTBEditionStory.all %}
+                                                {% include "ltb/story.html" %}
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </li>
                         </ol>
                     </div>
                 </div>
