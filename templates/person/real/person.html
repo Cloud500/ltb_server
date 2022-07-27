@@ -1,0 +1,9 @@
+{% load static %}
+<div class="card book h-100 text-dark" style="border:none;max-width:200px;min-width:200px;max-height:100px;min-height: 100px;">
+    <div class="card-body align-items-center d-flex justify-content-center">
+        <p class="person-name">
+            {{ person.name }}
+        </p>
+        <a href="{{ person.get_real_absolute_url }}" class="stretched-link"></a>
+    </div>
+</div>

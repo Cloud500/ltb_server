@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Person List{% endblock %}
+{% block content %}
+    <div class="container-fluid py-3">
+        <h2>Charakterliste</h2>
+        <hr>
+        <br>
+        {% include "person/fictional/filter.html" %}
+        <br>
+        <div class="row justify-content-center align-items-center">
+            {% for person in person_list %}
+                <div class="col-auto pb-4">
+                    {% include "person/fictional/person.html" %}
+                </div>
+            {% empty %}
+                <div class="col-auto pb-4 ">
+                    Keine Personen vorhanden
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% if is_paginated %}
+        {% include "pagination.html" with page=books %}
+    {% endif %}
+{% endblock %}

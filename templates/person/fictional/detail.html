@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% load static %}
+{% load widget_tweaks %}
+{% block title %}{{ ltb.number }} {{ ltb.complete_name }}{% endblock %}
+{% block content %}
+    <div class="container-fluid py-5">
+        <div class="card detail" style="max-width: 100%;">
+            <div class="row g-0 p-3">
+                <div class="col-auto mx-auto">
+                    {% if person.image %}
+                        <div class="position-relative">
+                            <img class="img-fluid rounded-start" src="{{ person.image.url }}" alt="cover"
+                                 style="max-width: 266px;">
+                        </div>
+                    {% else %}
+                        <img class="img-fluid rounded-start" src="{% static 'images/no_portrait.png' %}" alt="cover"
+                             style="max-width: 266px;">
+                    {% endif %}
+                </div>
+                <div class="col">
+                    <div class="card-body align-items-center d-flex">
+                        <ol class="list-group">
+                            <li class="list-group-item detail-person">
+                                <div class="me-auto">
+                                    <div class="detail_header">
+                                        {{ person.name }}
+                                    </div>
+                                    <div class="detail_content">
+                                        {% if person.description %}
+                                            {{ person.description }}
+                                        {% else %}
+                                            <em>keine Beschreibung vorhanden</em>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </li>
+                            {% if person.stories_of_character.all %}
+                                <li class="list-group-item detail-person">
+                                    <div class="me-auto">
+                                        <div class="detail_header">
+                                            In Storys
+                                        </div>
+                                        <div class="detail_content">
+                                            {% for story in person.stories_of_character.all %}
+                                                <a href="{{ story.get_absolute_url }}">
+                                                    {{ story.title }} ({{ story.code }})
+                                                </a>
+                                                <br/>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </li>
+                            {% endif %}
+                            <li class="list-group-item detail-person">
+                                <div class="me-auto">
+                                    <div class="detail_header">
+                                        Bücher mit {{ person.name }}
+                                    </div>
+                                    <div class="detail_content">
+                                        {% for story in person.stories_of_character.all %}
+                                            {% for story_edition in story.LTBEditionStory.all %}
+                                                {% for ltb in story_edition.ltb_edition.ltbs.all %}
+                                                    <a href="{{ ltb.get_absolute_url }}">
+                                                        {{ ltb.ltb_edition.ltb_number_set.ltb_type.code }}
+                                                        {{ ltb.number }}
+                                                        -
+                                                        {{ ltb.complete_name }}
+                                                        ({{ ltb.edition }})
+                                                    </a>
+                                                    <br/>
+                                                {% endfor %}
+                                            {% endfor %}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+{% load static %}
+{% load widget_tweaks %}
+{% block title %}{{ ltb.number }} {{ ltb.complete_name }}{% endblock %}
+{% block content %}
+    <div class="container-fluid py-5">
+        <div class="card detail" style="max-width: 100%;">
+            <div class="row g-0 p-3">
+                {#                <div class="col-auto mx-auto">#}
+                {#                    {% if ltb.image %}#}
+                {#                        <div class="position-relative">#}
+                {#                            <img class="img-fluid rounded-start" src="{{ ltb.image.url }}" alt="cover"#}
+                {#                                 style="max-width: 266px;">#}
+                {#                            {% if ltb.inventory_count > 0 %}#}
+                {#                                <a href="#"> {# TODO: link zu den Büchern #}
+                {#                                    <span class="inventory {% if ltb.have_first_edition %}first_edition{% endif %}">#}
+                {#                                    {{ ltb.inventory_count }}#}
+                {#                                </span>#}
+                {#                                </a>#}
+                {#                            {% endif %}#}
+                {#                        </div>#}
+                {#                    {% else %}#}
+                {#                        <img class="img-fluid rounded-start" src="{% static 'images/not_found.png' %}" alt="cover"#}
+                {#                             style="max-width: 266px;">#}
+                {#                    {% endif %}#}
+                {#                    <div class="row g-0 p-3">#}
+                {#                        <div class="col-auto mx-auto">#}
+                {#                            {% if request.user.is_authenticated %}#}
+                {#                                <form method="post" name="read">#}
+                {#                                    {% csrf_token %}#}
+                {#                                    <input type="hidden" name="read_book" value="1"/>#}
+                {#                                    <button type="submit" class="btn navigate">#}
+                {#                                        {% if ltb.is_read %}#}
+                {#                                            Ungelesen#}
+                {#                                        {% else %}#}
+                {#                                            Gelesen#}
+                {#                                        {% endif %}#}
+                {#                                    </button>#}
+                {#                                </form>#}
+                {#                            {% endif %}#}
+                {#                        </div>#}
+                {#                    </div>#}
+                {#                </div>#}
+                <div class="col">
+                    <div class="card-body align-items-center d-flex">
+                        <ol class="list-group">
+                            <li class="list-group-item detail-person">
+                                <div class="me-auto">
+                                    <div class="detail_header">
+                                        {{ person.name }}
+                                    </div>
+                                    <div class="detail_content">
+                                        {% if person.description %}
+                                            {{ person.description }}
+                                        {% else %}
+                                            <em>keine Beschreibung vorhanden</em>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </li>
+                            {% if person.stories_of_author.all %}
+                                <li class="list-group-item detail-person">
+                                    <div class="me-auto">
+                                        <div class="detail_header">
+                                            Autor von
+                                        </div>
+                                        <div class="detail_content">
+                                            {% for story in person.stories_of_author.all %}
+                                                <a href="{{ story.get_absolute_url }}">
+                                                    {{ story.title }} ({{ story.code }})
+                                                </a>
+                                                <br/>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </li>
+                            {% endif %}
+                            {% if person.stories_of_illustrator.all %}
+                                <li class="list-group-item detail-person">
+                                    <div class="me-auto">
+                                        <div class="detail_header">
+                                            Zeichner von
+                                        </div>
+                                        <div class="detail_content">
+                                            {% for story in person.stories_of_illustrator.all %}
+                                                <a href="{{ story.get_absolute_url }}">
+                                                    {{ story.title }} ({{ story.code }})
+                                                </a>
+                                                <br/>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </li>
+                            {% endif %}
+                            {#                            {% if ltb.ltb_versions_count > 1 %}#}
+                            {#                                <li class="list-group-item detail">#}
+                            {#                                    <div class="me-auto">#}
+                            {#                                        <div class="detail_header">#}
+                            {#                                            Editionen#}
+                            {#                                        </div>#}
+                            {#                                        <div class="detail_content">#}
+                            {#                                            <div class="btn-group btn-group-sm" role="group" aria-label="Book editions">#}
+                            {#                                                {% for edition in ltb.all_ltb_versions %}#}
+                            {#                                                    <button type="button"#}
+                            {#                                                            class="btn navigate"#}
+                            {#                                                            onclick="location.href='{{ edition.get_absolute_url }}'"#}
+                            {#                                                            {% if edition == ltb %}disabled{% endif %}>#}
+                            {#                                                        {{ edition.name }}#}
+                            {#                                                    </button>#}
+                            {#                                                {% endfor %}#}
+                            {#                                            </div>#}
+                            {#                                        </div>#}
+                            {#                                    </div>#}
+                            {#                                </li>#}
+                            {#                            {% endif %}#}
+                            {#                            {% if ltb.ltb_editions_count > 1 %}#}
+                            {#                                <li class="list-group-item detail">#}
+                            {#                                    <div class="me-auto">#}
+                            {#                                        <div class="detail_header">#}
+                            {#                                            Auflagen#}
+                            {#                                        </div>#}
+                            {#                                        <div class="detail_content">#}
+                            {#                                            <div class="btn-group btn-group-sm" role="group" aria-label="Book editions">#}
+                            {#                                                {% for edition in ltb.all_ltb_editions %}#}
+                            {#                                                    <button type="button"#}
+                            {#                                                            class="btn navigate"#}
+                            {#                                                            onclick="location.href='{{ edition.get_absolute_url }}'"#}
+                            {#                                                            {% if edition == ltb %}disabled{% endif %}>#}
+                            {#                                                        {{ edition.edition }}#}
+                            {#                                                    </button>#}
+                            {#                                                {% endfor %}#}
+                            {#                                            </div>#}
+                            {#                                        </div>#}
+                            {#                                    </div>#}
+                            {#                                </li>#}
+                            {#                            {% endif %}#}
+                            {#                            <li class="list-group-item detail">#}
+                            {#                                <div class="me-auto">#}
+                            {#                                    <div class="detail_header">#}
+                            {#                                        Geschichtsanzahl#}
+                            {#                                    </div>#}
+                            {#                                    <div class="detail_content">#}
+                            {#                                        {{ ltb.stories }}#}
+                            {#                                    </div>#}
+                            {#                                </div>#}
+                            {#                            </li>#}
+                            {#                            <li class="list-group-item detail">#}
+                            {#                                <div class="me-auto">#}
+                            {#                                    <div class="detail_header">#}
+                            {#                                        Seitenanzahl#}
+                            {#                                    </div>#}
+                            {#                                    <div class="detail_content">#}
+                            {#                                        {{ ltb.pages }}#}
+                            {#                                    </div>#}
+                            {#                                </div>#}
+                            {#                            </li>#}
+                            {#                            {% if perms.stock.add_quant_on_site %}#}
+                            {#                                <li class="list-group-item detail bottom">#}
+                            {#                                    <div class="me-auto">#}
+                            {#                                        <div class="detail_header">#}
+                            {#                                            Aufnehmen#}
+                            {#                                        </div>#}
+                            {#                                        <div class="detail_content">#}
+                            {#                                            <form method="post">#}
+                            {#                                                {% csrf_token %}#}
+                            {#                                                <div class="input-group bg-yellow rounded">#}
+                            {#                                                    <div class="input-group-text add">Erstausgabe</div>#}
+                            {#                                                    <input type="hidden" name="add_book" value="1"/>#}
+                            {#                                                    {% for field in add_book_form.visible_fields %}#}
+                            {#                                                        {{ field|add_class:'form-control add' }}#}
+                            {#                                                    {% endfor %}#}
+                            {#                                                    <button class="btn add btn-outline-secondary"#}
+                            {#                                                            type="submit"#}
+                            {#                                                            id="button-submit">#}
+                            {#                                                        Hinzufügen#}
+                            {#                                                    </button>#}
+                            {#                                                </div>#}
+                            {#                                            </form>#}
+                            {#                                        </div>#}
+                            {#                                    </div>#}
+                            {#                                </li>#}
+                            {#                            {% endif %}#}
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
