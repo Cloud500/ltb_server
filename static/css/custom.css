@@ -159,7 +159,7 @@ div.button_footer {
     position: fixed;
     right: 0;
     /*bottom: 80%;*/
-    top: 0px;
+    top: 11%;
     /*left: 0;*/
     z-index: 1030;
 }

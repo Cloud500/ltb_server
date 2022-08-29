@@ -3,7 +3,8 @@ from django.utils.text import slugify
 from django.urls import reverse
 
 from person.models import Person
-from .scraper import Story as s_Story, Person as s_Person, StoryScraper
+# from ltb.models import LTB
+from .scraper import Person as s_Person, StoryScraper
 
 
 class Genre(models.Model):
@@ -57,10 +58,10 @@ class Story(models.Model):
     date = models.DateField("Release Date", null=True, blank=True)
     slug = models.SlugField(max_length=255, unique=True)
 
-    author = models.ForeignKey(Person, related_name='stories_of_author', on_delete=models.RESTRICT, null=True, blank=True)
-    illustrator = models.ForeignKey(Person, related_name='stories_of_illustrator', on_delete=models.RESTRICT, null=True,
+    author = models.ForeignKey("person.Person", related_name='stories_of_author', on_delete=models.RESTRICT, null=True, blank=True)
+    illustrator = models.ForeignKey("person.Person", related_name='stories_of_illustrator', on_delete=models.RESTRICT, null=True,
                                     blank=True)
-    characters = models.ManyToManyField(Person, related_name='stories_of_character', blank=True)
+    characters = models.ManyToManyField("person.Person", related_name='stories_of_character', blank=True)
     genre = models.ManyToManyField(Genre, related_name='genre', blank=True)
 
     class Meta:
@@ -124,7 +125,6 @@ class Story(models.Model):
 
     def _fetch_characters(self, characters):
         self.characters.clear()
-        char: Person
         for char in characters:
             c_data = self.get_or_create_artist(char, 'fictional')
             if c_data:
@@ -164,3 +164,14 @@ class Story(models.Model):
         """
         return reverse('story:story_detail',
                        args=[self.slug])
+
+    def get_ltb_stories(self):
+        """
+        obsolete
+        """
+        ltb_stories = self.ltb_story_rel.order_by('ltb').all()
+        return ltb_stories
+
+    # def get_ltbs(self):
+    #     ltbs = LTB.objects.filter(ltb_story_rel__story=self).all()
+    #     return ltbs

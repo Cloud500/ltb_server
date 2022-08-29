@@ -1,9 +1,10 @@
 {% extends "base.html" %}
 {% load static %}
 {% load widget_tweaks %}
+{% load person_helper %}
 {% block title %}{{ ltb.number }} {{ ltb.complete_name }}{% endblock %}
 {% block content %}
-    <div class="container-fluid py-5">
+    <div class="container-fluid pt-3 pb-4">
         <div class="card detail" style="max-width: 100%;">
             <div class="row g-0 p-3">
                 <div class="col-auto mx-auto">
@@ -34,46 +35,46 @@
                                     </div>
                                 </div>
                             </li>
-                            {% if person.stories_of_character.all %}
+                            {% get_character_stories person as stories %}
+                            {% if stories %}
                                 <li class="list-group-item detail-person">
                                     <div class="me-auto">
                                         <div class="detail_header">
                                             In Storys
                                         </div>
                                         <div class="detail_content">
-                                            {% for story in person.stories_of_character.all %}
-                                                <a href="{{ story.get_absolute_url }}">
-                                                    {{ story.title }} ({{ story.code }})
+                                            {% for story in stories %}
+                                                <a href="/story/{{ story.2 }}">
+                                                    {{ story.0 }} ({{ story.1 }})
                                                 </a>
-                                                <br/>
+                                                {% if not forloop.last %}<br/>{% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="list-group-item detail-person">
+                                    <div class="me-auto">
+                                        <div class="detail_header">
+                                            Bücher mit {{ person.name }}
+                                        </div>
+                                        <div class="detail_content">
+                                            {% get_character_ltbs person as ltbs %}
+                                            {% for ltb in ltbs %}
+                                                <a href="/ltb/detail/{{ ltb.5 }}">
+                                                    {{ ltb.0 }}{{ ltb.1|stringformat:"03d" }}
+                                                    -
+                                                    {{ ltb.2 }}
+                                                    {% if ltb.4 %}
+                                                        {{ ltb.4 }}
+                                                    {% endif %}
+                                                    ({{ ltb.3 }}. Auflage)
+                                                </a>
+                                                {% if not forloop.last %}<br/>{% endif %}
                                             {% endfor %}
                                         </div>
                                     </div>
                                 </li>
                             {% endif %}
-                            <li class="list-group-item detail-person">
-                                <div class="me-auto">
-                                    <div class="detail_header">
-                                        Bücher mit {{ person.name }}
-                                    </div>
-                                    <div class="detail_content">
-                                        {% for story in person.stories_of_character.all %}
-                                            {% for story_edition in story.LTBEditionStory.all %}
-                                                {% for ltb in story_edition.ltb_edition.ltbs.all %}
-                                                    <a href="{{ ltb.get_absolute_url }}">
-                                                        {{ ltb.ltb_edition.ltb_number_set.ltb_type.code }}
-                                                        {{ ltb.number }}
-                                                        -
-                                                        {{ ltb.complete_name }}
-                                                        ({{ ltb.edition }})
-                                                    </a>
-                                                    <br/>
-                                                {% endfor %}
-                                            {% endfor %}
-                                        {% endfor %}
-                                    </div>
-                                </div>
-                            </li>
                         </ol>
                     </div>
                 </div>

@@ -3,7 +3,7 @@ from django.db import models
 from django.utils.text import slugify
 from django.db import connection
 
-from story.scraper import StoryScraper, Story as s_Story, Person as s_Person
+from story.scraper import StoryScraper, Story as s_Story
 from .scraper import LTBScraper
 
 from story.models import Story
@@ -426,43 +426,43 @@ class LTBEdition(models.Model):
             self.slug = slugify(self.create_slug())
         super().save(*args, **kwargs)
 
-    def get_or_create_story(self, story_data: s_Story):
-        edition_story = self.LTBEditionStory.filter(story__code=story_data.code).first()
-        # edition_story = LTBEditionStory.objects.filter(ltb_edition__id=self.id, story__code=story_data.code).first()
+    # def get_or_create_story(self, story_data: s_Story):
+    #     edition_story = self.LTBEditionStory.filter(story__code=story_data.code).first()
+    #     # edition_story = LTBEditionStory.objects.filter(ltb_edition__id=self.id, story__code=story_data.code).first()
+    #
+    #     if not edition_story:
+    #         story = Story.objects.filter(code=story_data.code).first()
+    #
+    #         if not story:
+    #             story = Story(code=story_data.code, url=self.url)
+    #             story.save()
+    #             story.fetch_data()
+    #
+    #         edition_story = LTBEditionStory(ltb_edition=self, story=story, page=story_data.page)
+    #         edition_story.save()
+    #     return edition_story
+    #
+    # def fetch_stories(self):
+    #     if self.url:
+    #         data = StoryScraper(self.url).get_story_data()
+    #         story: s_Story
+    #         for story in data:
+    #             self.get_or_create_story(story)
 
-        if not edition_story:
-            story = Story.objects.filter(code=story_data.code).first()
 
-            if not story:
-                story = Story(code=story_data.code, url=self.url)
-                story.save()
-                story.fetch_data()
-
-            edition_story = LTBEditionStory(ltb_edition=self, story=story, page=story_data.page)
-            edition_story.save()
-        return edition_story
-
-    def fetch_stories(self):
-        if self.url:
-            data = StoryScraper(self.url).get_story_data()
-            story: s_Story
-            for story in data:
-                self.get_or_create_story(story)
-
-
-class LTBEditionStory(models.Model):
-    ltb_edition = models.ForeignKey(LTBEdition, related_name='LTBEditionStory', on_delete=models.CASCADE)
-    story = models.ForeignKey(Story, related_name='LTBEditionStory', on_delete=models.CASCADE)
-    page = models.PositiveIntegerField("Stories", null=True, blank=True)
-
-    class Meta:
-        """
-        TODO: Docstring
-        """
-        verbose_name = 'Book, Story real'
-        verbose_name_plural = 'Books, Story real'
-        unique_together = ('ltb_edition', 'story')
-        ordering = ['page']
+# class LTBEditionStory(models.Model):
+#     ltb_edition = models.ForeignKey(LTBEdition, related_name='LTBEditionStory', on_delete=models.CASCADE)
+#     story = models.ForeignKey(Story, related_name='LTBEditionStory', on_delete=models.CASCADE)
+#     page = models.PositiveIntegerField("Stories", null=True, blank=True)
+#
+#     class Meta:
+#         """
+#         TODO: Docstring
+#         """
+#         verbose_name = 'Book, Story real'
+#         verbose_name_plural = 'Books, Story real'
+#         unique_together = ('ltb_edition', 'story')
+#         ordering = ['page']
 
 
 class InStockManager(models.Manager):
@@ -565,6 +565,15 @@ class LTB(models.Model):
         return self.ltb_edition.ltb_edition_number.id
 
     @property
+    def type_code(self):
+        """
+        TODO: Docstring
+
+        :return:
+        """
+        return self.ltb_edition.ltb_number_set.ltb_type.code
+
+    @property
     def number(self):
         """
         TODO: Docstring
@@ -636,8 +645,18 @@ class LTB(models.Model):
         type_string = self.ltb_edition.ltb_number_set.ltb_type.code
         number_string = self.number
         name = self.complete_name
+        version_string = self.name
         edition_string = self.edition
-        return f"{type_string}{number_string} - {name} {edition_string}"
+
+        complete_name = f"{type_string}{number_string} - {name}"
+
+        if version_string:
+            complete_name = f"{complete_name} - {version_string}"
+
+        if self.ltb_editions_count() > 1:
+            complete_name = f"{complete_name} ({edition_string})"
+
+        return complete_name
 
     def create_slug(self):
         """
@@ -765,3 +784,44 @@ class LTB(models.Model):
         if quant_count > 0:
             return True
         return False
+
+    def get_or_create_story(self, story_data: s_Story):
+        edition_story = self.ltb_story_rel.filter(story__code=story_data.code).first()
+
+        if not edition_story:
+            story = Story.objects.filter(code=story_data.code).first()
+
+            if not story:
+                story = Story(code=story_data.code, url=self.ltb_edition.url)
+                story.save()
+                story.fetch_data()
+
+            edition_story = LTBStory(ltb=self, story=story, page=story_data.page)
+            edition_story.save()
+        return edition_story
+
+    def fetch_stories(self):
+        if self.ltb_edition.url:
+            data = StoryScraper(self.ltb_edition.url).get_story_data()
+            story: s_Story
+            for story in data:
+                self.get_or_create_story(story)
+
+    def get_stories(self):
+        stories = Story.objects.filter(ltb_story_rel__ltb=self).order_by('ltb_story_rel__pages').all()
+        return stories
+
+
+class LTBStory(models.Model):
+    ltb = models.ForeignKey('LTB', related_name='ltb_story_rel', on_delete=models.CASCADE)
+    story = models.ForeignKey("story.Story", related_name='ltb_story_rel', on_delete=models.CASCADE)
+    page = models.PositiveIntegerField("Stories", null=True, blank=True)
+
+    class Meta:
+        """
+        TODO: Docstring
+        """
+        verbose_name = 'Book, Story real'
+        verbose_name_plural = 'Books, Story real'
+        unique_together = ('ltb', 'story')
+        ordering = ['page']

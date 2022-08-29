@@ -5,6 +5,9 @@ from django.urls import reverse
 from .scraper import get_image
 from .scraper import PersonScraper
 
+# from ltb.models import LTBStory
+
+
 class Person(models.Model):
     TYPES = [
         ("real", "Real person"),
@@ -85,3 +88,14 @@ class Person(models.Model):
         """
         return reverse('person:fictional_person_detail',
                        args=[self.slug])
+
+    # def get_character_stories(self):
+    #     # ltbs = LTB.objects.filter(ltb_edition__LTBEditionStory__story__characters__in=self).all()
+    #     stories = self.stories_of_character.all()
+    #     # test = stories.LTBEditionStory.all()
+    #     return stories
+    #
+    # # def get_character_ltbs(self):
+    # #     ltbs = LTB.objects.filter(ltb_story_rel__story__characters=self).distinct()
+    # #     # test2 = LTBStory.objects.filter(story__in=self.get_character_stories()).distinct()
+    # #     return ltbs

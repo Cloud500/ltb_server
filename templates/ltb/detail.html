@@ -3,30 +3,9 @@
 {% load widget_tweaks %}
 {% block title %}{{ ltb.number }} {{ ltb.complete_name }}{% endblock %}
 {% block content %}
-    <div class="container-fluid pb-5">
-        <h2 class="pt-3">{{ ltb.type }}</h2>
-        <hr>
-        <div class="row justify-content-center align-items-center pb-3">
-            <div class="col-auto">
-                <div class="btn-group btn-group-lg" role="group" aria-label="Book navigation">
-                    <button type="button"
-                            class="btn navigate"
-                            onclick="location.href='{{ ltb.previous_ltb.get_absolute_url }}'"
-                            {% if not ltb.previous_ltb %}disabled{% endif %}>
-                        Vorherige Nummer
-                    </button>
-                    <button type="button"
-                            class="btn navigate"
-                            onclick="location.href='{{ ltb.next_ltb.get_absolute_url }}'"
-                            {% if not ltb.next_ltb %}disabled{% endif %}>
-                        Nächste Nummer
-                    </button>
-                </div>
-            </div>
-        </div>
-
+    <div class="container-fluid pt-3 pb-4">
         <div class="card detail" style="max-width: 100%;">
-            <div class="row g-0 p-3">
+            <div class="row g-0 p-4">
                 <div class="col-auto mx-auto">
                     {% if ltb.image %}
                         <div class="position-relative">
@@ -88,6 +67,32 @@
                                     </div>
                                 </div>
                             </li>
+                            {% if perms.stock.add_quant_on_site %}
+                                <li class="list-group-item detail">
+                                    <div class="me-auto">
+                                        <div class="detail_header">
+                                            Aufnehmen
+                                        </div>
+                                        <div class="detail_content">
+                                            <form method="post">
+                                                {% csrf_token %}
+                                                <div class="input-group bg-yellow rounded">
+                                                    <div class="input-group-text add">Erstausgabe</div>
+                                                    <input type="hidden" name="add_book" value="1"/>
+                                                    {% for field in add_book_form.visible_fields %}
+                                                        {{ field|add_class:'form-control add' }}
+                                                    {% endfor %}
+                                                    <button class="btn add btn-outline-secondary"
+                                                            type="submit"
+                                                            id="button-submit">
+                                                        Hinzufügen
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </li>
+                            {% endif %}
                             <li class="list-group-item detail">
                                 <div class="me-auto">
                                     <div class="detail_header">
@@ -160,32 +165,6 @@
                                     </div>
                                 </div>
                             </li>
-                            {% if perms.stock.add_quant_on_site %}
-                                <li class="list-group-item detail">
-                                    <div class="me-auto">
-                                        <div class="detail_header">
-                                            Aufnehmen
-                                        </div>
-                                        <div class="detail_content">
-                                            <form method="post">
-                                                {% csrf_token %}
-                                                <div class="input-group bg-yellow rounded">
-                                                    <div class="input-group-text add">Erstausgabe</div>
-                                                    <input type="hidden" name="add_book" value="1"/>
-                                                    {% for field in add_book_form.visible_fields %}
-                                                        {{ field|add_class:'form-control add' }}
-                                                    {% endfor %}
-                                                    <button class="btn add btn-outline-secondary"
-                                                            type="submit"
-                                                            id="button-submit">
-                                                        Hinzufügen
-                                                    </button>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </li>
-                            {% endif %}
                             <li class="list-group-item detail bottom">
                                 <div class="me-auto">
                                     <div class="detail_header">
@@ -199,7 +178,7 @@
 
                                     <div class="collapse multi-collapse" id="collapse_test">
                                         <div class="detail_content">
-                                            {% for edition_story in ltb.ltb_edition.LTBEditionStory.all %}
+                                            {% for story in ltb.get_stories %}
                                                 {% include "ltb/story.html" %}
                                             {% endfor %}
                                         </div>
@@ -212,5 +191,25 @@
                 </div>
             </div>
         </div>
+
+        <div class="row justify-content-center align-items-center p-3 button_footer">
+            <div class="col-auto">
+                <div class="btn-group-vertical btn-group-sm" role="group" aria-label="Book navigation">
+                    <button type="button"
+                            class="btn navigate"
+                            onclick="location.href='{{ ltb.previous_ltb.get_absolute_url }}'"
+                            {% if not ltb.previous_ltb %}disabled{% endif %}>
+                        ←
+                    </button>
+                    <button type="button"
+                            class="btn navigate"
+                            onclick="location.href='{{ ltb.next_ltb.get_absolute_url }}'"
+                            {% if not ltb.next_ltb %}disabled{% endif %}>
+                        →
+                    </button>
+                </div>
+            </div>
+        </div>
+
     </div>
 {% endblock %}

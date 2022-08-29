@@ -1,9 +1,10 @@
 {% extends "base.html" %}
 {% load static %}
 {% load widget_tweaks %}
+{% load story_helper %}
 {% block title %}{{ story.title }} {{ story.code }}{% endblock %}
 {% block content %}
-    <div class="container-fluid py-5">
+    <div class="container-fluid pt-3 pb-4">
         <div class="card detail" style="max-width: 100%;">
             <div class="row g-0 p-3">
                 <div class="col">
@@ -128,18 +129,18 @@
                                         Bücher
                                     </div>
                                     <div class="detail_content">
-                                        {% for story_edition in story.LTBEditionStory.all %}
-                                            {% for ltb in story_edition.ltb_edition.ltbs.all %}
-                                                <div style="z-index:2;position:relative;">
-                                                    <a href="{{ ltb.get_absolute_url }}">
-                                                        {{ ltb.ltb_edition.ltb_number_set.ltb_type.code }}
-                                                        {{ ltb.number }}
-                                                        -
-                                                        {{ ltb.complete_name }}
-                                                        ({{ ltb.edition }})
-                                                    </a>
-                                                </div>
-                                            {% endfor %}
+                                        {% get_story_ltbs story as ltbs %}
+                                        {% for ltb in ltbs %}
+                                            <a href="/ltb/detail/{{ ltb.5 }}">
+                                                {{ ltb.0 }}{{ ltb.1|stringformat:"03d" }}
+                                                -
+                                                {{ ltb.2 }}
+                                                {% if ltb.4 %}
+                                                    {{ ltb.4 }}
+                                                {% endif %}
+                                                ({{ ltb.3 }}. Auflage)
+                                            </a>
+                                            {% if not forloop.last %}<br/>{% endif %}
                                         {% endfor %}
                                     </div>
                                 </div>
